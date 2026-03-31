@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { FiArrowRight, FiMail } from 'react-icons/fi'
+import { FiArrowRight, FiMail, FiDownload } from 'react-icons/fi'
 import NeuralOrb from './NeuralOrb'
 import NeuralNetworkViz from './NeuralNetworkViz'
 
@@ -80,21 +80,6 @@ export default function Hero() {
       <div className="relative z-10 max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
         {/* Left - Text */}
         <div className="text-center lg:text-left">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neural/10 border border-neural/20 mb-8"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-matrix opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-matrix" />
-            </span>
-            <span className="text-sm font-medium text-neural-light font-mono">
-              Available for opportunities
-            </span>
-          </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -152,6 +137,14 @@ export default function Hero() {
               <FiMail />
               Get in Touch
             </a>
+            <a
+              href="/Ahmad_Sharara_CV.pdf"
+              download
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-border hover:border-synapse text-text-dim hover:text-synapse-light font-semibold hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <FiDownload />
+              Resume
+            </a>
           </motion.div>
         </div>
 
@@ -166,6 +159,21 @@ export default function Hero() {
             <div className="absolute inset-0 bg-neural/5 rounded-3xl blur-3xl" />
             <NeuralNetworkViz />
           </div>
+        </motion.div>
+
+        {/* Mobile: mini stats bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.6 }}
+          className="lg:hidden col-span-full flex justify-center gap-6 mt-4"
+        >
+          {[['3+', 'Roles'], ['6+', 'Projects'], ['88%', 'NLP Acc.']].map(([val, label]) => (
+            <div key={label} className="text-center">
+              <div className="text-xl font-extrabold text-gradient-neural">{val}</div>
+              <div className="text-[0.65rem] text-text-muted uppercase tracking-wider">{label}</div>
+            </div>
+          ))}
         </motion.div>
       </div>
 

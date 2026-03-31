@@ -69,11 +69,10 @@ function AnimatedTerminal() {
         <div className="w-3 h-3 rounded-full bg-red-500/70" />
         <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
         <div className="w-3 h-3 rounded-full bg-green-500/70" />
-        <span className="ml-3 text-xs text-text-muted font-mono">terminal — ai_system</span>
-        <div className="ml-auto flex items-center gap-1">
+        <span className="ml-auto flex items-center gap-1">
           <span className="w-1.5 h-1.5 rounded-full bg-matrix animate-pulse" />
           <span className="text-[0.65rem] text-matrix font-mono">LIVE</span>
-        </div>
+        </span>
       </div>
       <div className="p-5 font-mono text-sm space-y-1 min-h-[360px]">
         {terminalLines.map((line, i) => (

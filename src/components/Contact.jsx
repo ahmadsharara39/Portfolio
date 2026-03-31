@@ -94,10 +94,6 @@ export default function Contact() {
             transition={{ delay: 0.2 }}
           >
             <div className="bg-surface border border-border rounded-2xl p-8 glow-neural">
-              <div className="flex items-center gap-2 mb-6">
-                <span className="w-2 h-2 rounded-full bg-matrix animate-pulse" />
-                <span className="font-mono text-sm text-text-muted">send_message.api</span>
-              </div>
               <form
                 action="https://formsubmit.co/ahmadsharara03@gmail.com"
                 method="POST"

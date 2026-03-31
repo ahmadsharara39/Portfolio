@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HiMenuAlt3, HiX } from 'react-icons/hi'
+import { FiDownload } from 'react-icons/fi'
 
 const links = [
   { label: 'About', href: '#about' },
@@ -14,11 +15,23 @@ const links = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const [active, setActive] = useState('')
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handler)
-    return () => window.removeEventListener('scroll', handler)
+    const onScroll = () => {
+      setScrolled(window.scrollY > 50)
+      const sections = links.map((l) => l.href.slice(1))
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i])
+        if (el && el.getBoundingClientRect().top <= 120) {
+          setActive(sections[i])
+          return
+        }
+      }
+      setActive('')
+    }
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   return (
@@ -42,13 +55,27 @@ export default function Navbar() {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-sm font-medium text-text-dim hover:text-neural-light transition-colors relative group"
+                className={`text-sm font-medium transition-colors relative group ${
+                  active === link.href.slice(1) ? 'text-neural-light' : 'text-text-dim hover:text-neural-light'
+                }`}
               >
                 {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-neural group-hover:w-full transition-all duration-300" />
+                <span className={`absolute -bottom-1 left-0 h-0.5 bg-neural transition-all duration-300 ${
+                  active === link.href.slice(1) ? 'w-full' : 'w-0 group-hover:w-full'
+                }`} />
               </a>
             </li>
           ))}
+          <li>
+            <a
+              href="/Ahmad_Sharara_CV.pdf"
+              download
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-neural/10 border border-neural/20 text-neural-light text-sm font-medium hover:bg-neural/20 transition-all duration-300"
+            >
+              <FiDownload className="text-xs" />
+              Resume
+            </a>
+          </li>
         </ul>
 
         <button
@@ -80,6 +107,16 @@ export default function Navbar() {
                   </a>
                 </li>
               ))}
+              <li>
+                <a
+                  href="/Ahmad_Sharara_CV.pdf"
+                  download
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-neural/10 border border-neural/20 text-neural-light text-sm font-medium"
+                >
+                  <FiDownload className="text-xs" />
+                  Resume
+                </a>
+              </li>
             </ul>
           </motion.div>
         )}
