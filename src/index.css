@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@theme {
+  --color-void: #050510;
+  --color-abyss: #0a0a1a;
+  --color-deep: #0f0f23;
+  --color-surface: #141428;
+  --color-elevated: #1a1a35;
+  --color-border: #2a2a4a;
+  --color-border-glow: #3a3a6a;
+  --color-neural: #7c3aed;
+  --color-neural-light: #a78bfa;
+  --color-synapse: #06b6d4;
+  --color-synapse-light: #67e8f9;
+  --color-pulse: #ec4899;
+  --color-pulse-light: #f9a8d4;
+  --color-matrix: #10b981;
+  --color-text: #e2e8f0;
+  --color-text-dim: #94a3b8;
+  --color-text-muted: #64748b;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-neural) var(--color-abyss);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-void);
+    color: var(--color-text);
+    line-height: 1.7;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-neural);
+    color: white;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--color-abyss); }
+  ::-webkit-scrollbar-thumb { background: var(--color-neural); border-radius: 3px; }
+}
+
+@utility glow-neural {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.15), 0 0 60px rgba(124, 58, 237, 0.05);
+}
+
+@utility glow-synapse {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.15), 0 0 60px rgba(6, 182, 212, 0.05);
+}
+
+@utility glow-text-neural {
+  text-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+}
+
+@utility text-gradient-neural {
+  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@utility text-gradient-pulse {
+  background: linear-gradient(135deg, #ec4899, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@utility bg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(124, 58, 237, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+@utility bg-dot-pattern {
+  background-image: radial-gradient(rgba(124, 58, 237, 0.08) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
