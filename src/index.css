@@ -91,3 +91,14 @@
   background-image: radial-gradient(rgba(124, 58, 237, 0.08) 1px, transparent 1px);
   background-size: 30px 30px;
 }
+
+@keyframes scan {
+  0% { top: -1px; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@utility animate-scan {
+  animation: scan 3s ease-in-out infinite;
+}

@@ -1,25 +1,100 @@
-import { motion } from 'framer-motion'
+import { useState, useEffect, useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import SectionHeading from './SectionHeading'
 
 const stats = [
-  { value: '3+', label: 'Roles' },
-  { value: '6+', label: 'Projects' },
-  { value: '88%', label: 'NLP Accuracy' },
+  { value: 3, suffix: '+', label: 'Roles' },
+  { value: 6, suffix: '+', label: 'Projects' },
+  { value: 88, suffix: '%', label: 'NLP Accuracy' },
 ]
 
-const codeLines = [
-  { indent: 0, content: <><span className="text-purple-400">const</span> <span className="text-sky-400">ahmad</span> = {'{'}</> },
-  { indent: 1, content: <><span className="text-sky-400">role</span>: <span className="text-emerald-400">"AI & Software Engineer"</span>,</> },
-  { indent: 1, content: <><span className="text-sky-400">location</span>: <span className="text-emerald-400">"Lebanon"</span>,</> },
-  { indent: 1, content: <><span className="text-sky-400">passions</span>: [</> },
-  { indent: 2, content: <><span className="text-emerald-400">"Machine Learning"</span>,</> },
-  { indent: 2, content: <><span className="text-emerald-400">"NLP"</span>,</> },
-  { indent: 2, content: <><span className="text-emerald-400">"Full-Stack Dev"</span>,</> },
-  { indent: 2, content: <><span className="text-emerald-400">"Automation"</span>,</> },
-  { indent: 1, content: <>],</> },
-  { indent: 1, content: <><span className="text-sky-400">coffee</span>: <span className="text-orange-400">true</span></> },
-  { indent: 0, content: <>{'}'}</> },
+const terminalLines = [
+  { text: '> initializing ahmad_sharara.ai ...', color: 'text-text-muted', delay: 0 },
+  { text: '✓ Loading neural pathways', color: 'text-matrix', delay: 600 },
+  { text: '✓ Mounting NLP transformers', color: 'text-matrix', delay: 1200 },
+  { text: '✓ Connecting API endpoints', color: 'text-matrix', delay: 1800 },
+  { text: '✓ Automation workflows: ACTIVE', color: 'text-matrix', delay: 2400 },
+  { text: '', color: '', delay: 3000 },
+  { text: 'const profile = {', color: 'text-purple-400', delay: 3200 },
+  { text: '  role: "AI & Software Engineer",', color: 'text-emerald-400', delay: 3500 },
+  { text: '  location: "Lebanon",', color: 'text-emerald-400', delay: 3800 },
+  { text: '  stack: ["PyTorch", "React",', color: 'text-sky-400', delay: 4100 },
+  { text: '    "FastAPI", "Make.com"],', color: 'text-sky-400', delay: 4400 },
+  { text: '  status: "ready"', color: 'text-orange-400', delay: 4700 },
+  { text: '}', color: 'text-purple-400', delay: 5000 },
+  { text: '', color: '', delay: 5200 },
+  { text: '> System online. All modules loaded.', color: 'text-synapse-light', delay: 5400 },
 ]
+
+function AnimatedCounter({ value, suffix = '' }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true })
+
+  useEffect(() => {
+    if (!inView) return
+    let start = 0
+    const duration = 1500
+    const step = (timestamp) => {
+      if (!start) start = timestamp
+      const progress = Math.min((timestamp - start) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setCount(Math.floor(eased * value))
+      if (progress < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }, [inView, value])
+
+  return <span ref={ref}>{count}{suffix}</span>
+}
+
+function AnimatedTerminal() {
+  const [visibleLines, setVisibleLines] = useState([])
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-100px' })
+
+  useEffect(() => {
+    if (!inView) return
+    const timers = terminalLines.map((line, i) =>
+      setTimeout(() => {
+        setVisibleLines((prev) => [...prev, i])
+      }, line.delay)
+    )
+    return () => timers.forEach(clearTimeout)
+  }, [inView])
+
+  return (
+    <div ref={ref} className="bg-deep border border-border rounded-2xl overflow-hidden glow-neural">
+      <div className="flex items-center gap-2 px-5 py-3 border-b border-border bg-void/50">
+        <div className="w-3 h-3 rounded-full bg-red-500/70" />
+        <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
+        <div className="w-3 h-3 rounded-full bg-green-500/70" />
+        <span className="ml-3 text-xs text-text-muted font-mono">terminal — ai_system</span>
+        <div className="ml-auto flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-matrix animate-pulse" />
+          <span className="text-[0.65rem] text-matrix font-mono">LIVE</span>
+        </div>
+      </div>
+      <div className="p-5 font-mono text-sm space-y-1 min-h-[360px]">
+        {terminalLines.map((line, i) => (
+          <div
+            key={i}
+            className={`transition-all duration-300 ${
+              visibleLines.includes(i)
+                ? 'opacity-100 translate-x-0'
+                : 'opacity-0 -translate-x-4'
+            } ${line.color}`}
+          >
+            {line.text || '\u00A0'}
+          </div>
+        ))}
+        {visibleLines.length === terminalLines.length && (
+          <div className="text-text-muted animate-pulse mt-1">▌</div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 export default function About() {
   return (
@@ -36,9 +111,9 @@ export default function About() {
               className="text-text-dim text-lg leading-relaxed"
             >
               I'm a Computer & Communications Engineering graduate from Rafik Hariri University with hands-on
-              experience in <span className="text-neural-light">AI/ML</span>,{' '}
-              <span className="text-synapse-light">NLP</span>, and{' '}
-              <span className="text-pulse-light">full-stack development</span>. I've fine-tuned transformer
+              experience in <span className="text-neural-light font-medium">AI/ML</span>,{' '}
+              <span className="text-synapse-light font-medium">NLP</span>, and{' '}
+              <span className="text-pulse-light font-medium">full-stack development</span>. I've fine-tuned transformer
               models, built end-to-end automation workflows, and shipped production-ready web applications.
             </motion.p>
             <motion.p
@@ -61,10 +136,12 @@ export default function About() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.15 + i * 0.1 }}
-                  className="bg-surface border border-border rounded-xl p-5 text-center hover:border-neural/50 transition-colors group"
+                  className="group bg-surface border border-border rounded-xl p-5 text-center hover:border-neural/50 transition-all duration-300 hover:glow-neural"
                 >
-                  <div className="text-2xl sm:text-3xl font-extrabold text-gradient-neural">{s.value}</div>
-                  <div className="text-xs text-text-muted uppercase tracking-wider mt-1">{s.label}</div>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-gradient-neural">
+                    <AnimatedCounter value={s.value} suffix={s.suffix} />
+                  </div>
+                  <div className="text-xs text-text-muted uppercase tracking-wider mt-1 group-hover:text-text-dim transition-colors">{s.label}</div>
                 </motion.div>
               ))}
             </div>
@@ -75,33 +152,8 @@ export default function About() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="relative"
           >
-            <div className="bg-surface border border-border rounded-2xl overflow-hidden glow-neural">
-              <div className="flex items-center gap-2 px-5 py-3 border-b border-border bg-deep">
-                <div className="w-3 h-3 rounded-full bg-red-500/70" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
-                <div className="w-3 h-3 rounded-full bg-green-500/70" />
-                <span className="ml-3 text-xs text-text-muted font-mono">about.js</span>
-              </div>
-              <div className="p-6 font-mono text-sm leading-loose">
-                {codeLines.map((line, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 + i * 0.05 }}
-                    className="flex"
-                  >
-                    <span className="text-text-muted/30 w-8 text-right mr-4 select-none text-xs leading-loose">
-                      {i + 1}
-                    </span>
-                    <span style={{ paddingLeft: `${line.indent * 1.5}rem` }}>{line.content}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+            <AnimatedTerminal />
           </motion.div>
         </div>
       </div>

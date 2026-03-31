@@ -1,0 +1,113 @@
+import { useEffect, useRef } from 'react'
+
+const LAYERS = [4, 6, 8, 6, 3]
+const NODE_RADIUS = 4
+const LAYER_GAP = 80
+const NODE_GAP = 28
+
+export default function NeuralNetworkViz() {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    const w = (LAYERS.length - 1) * LAYER_GAP + 60
+    const maxNodes = Math.max(...LAYERS)
+    const h = maxNodes * NODE_GAP + 40
+    canvas.width = w * 2
+    canvas.height = h * 2
+    canvas.style.width = w + 'px'
+    canvas.style.height = h + 'px'
+    ctx.scale(2, 2)
+
+    const nodes = LAYERS.map((count, li) => {
+      const x = 30 + li * LAYER_GAP
+      const totalH = (count - 1) * NODE_GAP
+      const startY = (h - totalH) / 2
+      return Array.from({ length: count }, (_, ni) => ({
+        x,
+        y: startY + ni * NODE_GAP,
+        pulse: Math.random() * Math.PI * 2,
+      }))
+    })
+
+    let t = 0
+    let animId
+
+    const draw = () => {
+      t += 0.02
+      ctx.clearRect(0, 0, w, h)
+
+      for (let li = 0; li < nodes.length - 1; li++) {
+        for (const from of nodes[li]) {
+          for (const to of nodes[li + 1]) {
+            const alpha = 0.06 + Math.sin(t + from.pulse + to.pulse) * 0.03
+            ctx.beginPath()
+            ctx.moveTo(from.x, from.y)
+            ctx.lineTo(to.x, to.y)
+            ctx.strokeStyle = `rgba(124, 58, 237, ${alpha})`
+            ctx.lineWidth = 0.5
+            ctx.stroke()
+          }
+        }
+      }
+
+      for (let li = 0; li < nodes.length - 1; li++) {
+        const srcIdx = Math.floor((t * 0.5 + li) % nodes[li].length)
+        const dstIdx = Math.floor((t * 0.7 + li) % nodes[li + 1].length)
+        const from = nodes[li][srcIdx]
+        const to = nodes[li + 1][dstIdx]
+        const progress = (t * 0.3 + li * 0.4) % 1
+        const px = from.x + (to.x - from.x) * progress
+        const py = from.y + (to.y - from.y) * progress
+
+        ctx.beginPath()
+        ctx.arc(px, py, 2, 0, Math.PI * 2)
+        ctx.fillStyle = 'rgba(6, 182, 212, 0.8)'
+        ctx.fill()
+        ctx.beginPath()
+        ctx.arc(px, py, 6, 0, Math.PI * 2)
+        ctx.fillStyle = 'rgba(6, 182, 212, 0.15)'
+        ctx.fill()
+
+        ctx.beginPath()
+        ctx.moveTo(from.x, from.y)
+        ctx.lineTo(to.x, to.y)
+        ctx.strokeStyle = `rgba(6, 182, 212, 0.2)`
+        ctx.lineWidth = 1
+        ctx.stroke()
+      }
+
+      for (let li = 0; li < nodes.length; li++) {
+        for (const node of nodes[li]) {
+          const pulse = Math.sin(t * 1.5 + node.pulse) * 0.5 + 0.5
+          const r = NODE_RADIUS + pulse * 1.5
+
+          ctx.beginPath()
+          ctx.arc(node.x, node.y, r * 3, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(124, 58, 237, ${0.04 + pulse * 0.04})`
+          ctx.fill()
+
+          ctx.beginPath()
+          ctx.arc(node.x, node.y, r, 0, Math.PI * 2)
+          const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, r)
+          grad.addColorStop(0, `rgba(167, 139, 250, ${0.7 + pulse * 0.3})`)
+          grad.addColorStop(1, `rgba(124, 58, 237, ${0.3 + pulse * 0.2})`)
+          ctx.fillStyle = grad
+          ctx.fill()
+        }
+      }
+
+      animId = requestAnimationFrame(draw)
+    }
+    draw()
+    return () => cancelAnimationFrame(animId)
+  }, [])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="opacity-60 hover:opacity-80 transition-opacity duration-700"
+    />
+  )
+}
