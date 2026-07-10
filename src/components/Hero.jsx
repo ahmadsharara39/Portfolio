@@ -5,11 +5,11 @@ import NeuralOrb from './NeuralOrb'
 import NeuralNetworkViz from './NeuralNetworkViz'
 
 const roles = [
+  'Automation & Integration Engineer',
   'AI Engineer',
-  'Automation Specialist',
-  'NLP Developer',
   'Full-Stack Builder',
   'Integration Architect',
+  'Automation Specialist',
 ]
 
 const floatingBadges = [
