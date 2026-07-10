@@ -1,19 +1,20 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useReducedMotion } from 'framer-motion'
 import SectionHeading from './SectionHeading'
 
 const stats = [
   { value: 3, suffix: '+', label: 'Roles' },
-  { value: 6, suffix: '+', label: 'Projects' },
+  { value: 7, suffix: '+', label: 'Projects' },
   { value: 88, suffix: '%', label: 'NLP Accuracy' },
 ]
 
+// Terminal is a permanently-dark surface, so use fixed colors (not theme tokens).
 const terminalLines = [
-  { text: '> initializing ahmad_sharara.ai ...', color: 'text-text-muted', delay: 0 },
-  { text: '✓ Loading neural pathways', color: 'text-matrix', delay: 600 },
-  { text: '✓ Mounting NLP transformers', color: 'text-matrix', delay: 1200 },
-  { text: '✓ Connecting API endpoints', color: 'text-matrix', delay: 1800 },
-  { text: '✓ Automation workflows: ACTIVE', color: 'text-matrix', delay: 2400 },
+  { text: '> initializing ahmad_sharara.ai ...', color: 'text-slate-500', delay: 0 },
+  { text: '✓ Loading neural pathways', color: 'text-emerald-400', delay: 600 },
+  { text: '✓ Mounting NLP transformers', color: 'text-emerald-400', delay: 1200 },
+  { text: '✓ Connecting API endpoints', color: 'text-emerald-400', delay: 1800 },
+  { text: '✓ Automation workflows: ACTIVE', color: 'text-emerald-400', delay: 2400 },
   { text: '', color: '', delay: 3000 },
   { text: 'const profile = {', color: 'text-purple-400', delay: 3200 },
   { text: '  role: "AI & Software Engineer",', color: 'text-emerald-400', delay: 3500 },
@@ -23,16 +24,21 @@ const terminalLines = [
   { text: '  status: "ready"', color: 'text-orange-400', delay: 4700 },
   { text: '}', color: 'text-purple-400', delay: 5000 },
   { text: '', color: '', delay: 5200 },
-  { text: '> System online. All modules loaded.', color: 'text-synapse-light', delay: 5400 },
+  { text: '> System online. All modules loaded.', color: 'text-cyan-300', delay: 5400 },
 ]
 
 function AnimatedCounter({ value, suffix = '' }) {
   const [count, setCount] = useState(0)
   const ref = useRef(null)
   const inView = useInView(ref, { once: true })
+  const reduce = useReducedMotion()
 
   useEffect(() => {
     if (!inView) return
+    if (reduce) {
+      setCount(value)
+      return
+    }
     let start = 0
     const duration = 1500
     const step = (timestamp) => {
@@ -43,7 +49,7 @@ function AnimatedCounter({ value, suffix = '' }) {
       if (progress < 1) requestAnimationFrame(step)
     }
     requestAnimationFrame(step)
-  }, [inView, value])
+  }, [inView, value, reduce])
 
   return <span ref={ref}>{count}{suffix}</span>
 }
@@ -52,26 +58,31 @@ function AnimatedTerminal() {
   const [visibleLines, setVisibleLines] = useState([])
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-100px' })
+  const reduce = useReducedMotion()
 
   useEffect(() => {
     if (!inView) return
+    if (reduce) {
+      setVisibleLines(terminalLines.map((_, i) => i))
+      return
+    }
     const timers = terminalLines.map((line, i) =>
       setTimeout(() => {
         setVisibleLines((prev) => [...prev, i])
       }, line.delay)
     )
     return () => timers.forEach(clearTimeout)
-  }, [inView])
+  }, [inView, reduce])
 
   return (
-    <div ref={ref} className="bg-deep border border-border rounded-2xl overflow-hidden glow-neural">
-      <div className="flex items-center gap-2 px-5 py-3 border-b border-border bg-void/50">
+    <div ref={ref} className="bg-code border border-code-border rounded-2xl overflow-hidden glow-neural">
+      <div className="flex items-center gap-2 px-5 py-3 border-b border-code-border bg-white/[0.02]">
         <div className="w-3 h-3 rounded-full bg-red-500/70" />
         <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
         <div className="w-3 h-3 rounded-full bg-green-500/70" />
         <span className="ml-auto flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-matrix animate-pulse" />
-          <span className="text-[0.65rem] text-matrix font-mono">LIVE</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-[0.65rem] text-emerald-400 font-mono">LIVE</span>
         </span>
       </div>
       <div className="p-5 font-mono text-sm space-y-1 min-h-[360px]">
@@ -88,7 +99,7 @@ function AnimatedTerminal() {
           </div>
         ))}
         {visibleLines.length === terminalLines.length && (
-          <div className="text-text-muted animate-pulse mt-1">▌</div>
+          <div className="text-slate-500 animate-pulse mt-1">▌</div>
         )}
       </div>
     </div>

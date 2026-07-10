@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { getTheme, onThemeChange, prefersReducedMotion, onReducedMotionChange } from '../lib/theme'
 
 const LAYERS = [4, 6, 8, 6, 3]
 const NODE_RADIUS = 4
@@ -20,6 +21,10 @@ export default function NeuralNetworkViz() {
     canvas.style.height = h + 'px'
     ctx.scale(2, 2)
 
+    let theme = getTheme()
+    let reduced = prefersReducedMotion()
+    let animId = null
+
     const nodes = LAYERS.map((count, li) => {
       const x = 30 + li * LAYER_GAP
       const totalH = (count - 1) * NODE_GAP
@@ -32,16 +37,15 @@ export default function NeuralNetworkViz() {
     })
 
     let t = 0
-    let animId
 
-    const draw = () => {
-      t += 0.02
-      ctx.clearRect(0, 0, w, h)
+    const connBase = () => (theme === 'light' ? 0.13 : 0.06)
 
+    const drawConnections = (animated) => {
+      const base = connBase()
       for (let li = 0; li < nodes.length - 1; li++) {
         for (const from of nodes[li]) {
           for (const to of nodes[li + 1]) {
-            const alpha = 0.06 + Math.sin(t + from.pulse + to.pulse) * 0.03
+            const alpha = animated ? base + Math.sin(t + from.pulse + to.pulse) * 0.03 : base
             ctx.beginPath()
             ctx.moveTo(from.x, from.y)
             ctx.lineTo(to.x, to.y)
@@ -51,7 +55,9 @@ export default function NeuralNetworkViz() {
           }
         }
       }
+    }
 
+    const drawTravelingPulses = () => {
       for (let li = 0; li < nodes.length - 1; li++) {
         const srcIdx = Math.floor((t * 0.5 + li) % nodes[li].length)
         const dstIdx = Math.floor((t * 0.7 + li) % nodes[li + 1].length)
@@ -77,10 +83,12 @@ export default function NeuralNetworkViz() {
         ctx.lineWidth = 1
         ctx.stroke()
       }
+    }
 
+    const drawNodes = (animated) => {
       for (let li = 0; li < nodes.length; li++) {
         for (const node of nodes[li]) {
-          const pulse = Math.sin(t * 1.5 + node.pulse) * 0.5 + 0.5
+          const pulse = animated ? Math.sin(t * 1.5 + node.pulse) * 0.5 + 0.5 : 0.6
           const r = NODE_RADIUS + pulse * 1.5
 
           ctx.beginPath()
@@ -97,11 +105,45 @@ export default function NeuralNetworkViz() {
           ctx.fill()
         }
       }
+    }
 
+    const drawStatic = () => {
+      ctx.clearRect(0, 0, w, h)
+      drawConnections(false)
+      drawNodes(false)
+    }
+
+    const draw = () => {
+      t += 0.02
+      ctx.clearRect(0, 0, w, h)
+      drawConnections(true)
+      drawTravelingPulses()
+      drawNodes(true)
       animId = requestAnimationFrame(draw)
     }
-    draw()
-    return () => cancelAnimationFrame(animId)
+
+    const start = () => {
+      cancelAnimationFrame(animId)
+      animId = null
+      if (reduced) drawStatic()
+      else draw()
+    }
+    start()
+
+    const offTheme = onThemeChange((tm) => {
+      theme = tm
+      if (reduced) drawStatic()
+    })
+    const offRM = onReducedMotionChange((r) => {
+      reduced = r
+      start()
+    })
+
+    return () => {
+      cancelAnimationFrame(animId)
+      offTheme()
+      offRM()
+    }
   }, [])
 
   return (

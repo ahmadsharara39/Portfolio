@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { getTheme, onThemeChange, prefersReducedMotion, onReducedMotionChange } from '../lib/theme'
 
 export default function ParticleField() {
   const canvasRef = useRef(null)
@@ -6,9 +7,11 @@ export default function ParticleField() {
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
-    let animationId
+    let animationId = null
     let mouse = { x: null, y: null }
     let time = 0
+    let theme = getTheme()
+    let reduced = prefersReducedMotion()
 
     const resize = () => {
       canvas.width = window.innerWidth
@@ -69,9 +72,10 @@ export default function ParticleField() {
         if (this.y > canvas.height + 50) this.y = -50
       }
       draw(ctx) {
+        const mul = theme === 'light' ? 1.15 : 1
         ctx.beginPath()
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.opacity})`
+        ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${Math.min(this.opacity * mul, 1)})`
         ctx.fill()
         ctx.beginPath()
         ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2)
@@ -84,13 +88,14 @@ export default function ParticleField() {
     const nodes = Array.from({ length: count }, () => new Node())
 
     const drawConnections = () => {
+      const base = theme === 'light' ? 0.11 : 0.08
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const dx = nodes[i].x - nodes[j].x
           const dy = nodes[i].y - nodes[j].y
           const dist = Math.sqrt(dx * dx + dy * dy)
           if (dist < 150) {
-            const alpha = 0.08 * (1 - dist / 150)
+            const alpha = base * (1 - dist / 150)
             const ci = nodes[i].color
             const cj = nodes[j].color
             const gradient = ctx.createLinearGradient(nodes[i].x, nodes[i].y, nodes[j].x, nodes[j].y)
@@ -126,6 +131,13 @@ export default function ParticleField() {
       }
     }
 
+    // Single static frame — used when the visitor prefers reduced motion.
+    const drawStatic = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      nodes.forEach((n) => n.draw(ctx))
+      drawConnections()
+    }
+
     const animate = () => {
       time++
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -134,9 +146,27 @@ export default function ParticleField() {
       drawDataPulses(time)
       animationId = requestAnimationFrame(animate)
     }
-    animate()
 
-    const resizeObserver = new ResizeObserver(resize)
+    const start = () => {
+      cancelAnimationFrame(animationId)
+      animationId = null
+      if (reduced) drawStatic()
+      else animate()
+    }
+    start()
+
+    const offTheme = onThemeChange((t) => {
+      theme = t
+      if (reduced) drawStatic()
+    })
+    const offRM = onReducedMotionChange((r) => {
+      reduced = r
+      start()
+    })
+    const resizeObserver = new ResizeObserver(() => {
+      resize()
+      if (reduced) drawStatic()
+    })
     resizeObserver.observe(document.body)
 
     return () => {
@@ -144,6 +174,8 @@ export default function ParticleField() {
       window.removeEventListener('resize', resize)
       window.removeEventListener('mousemove', handleMouse)
       resizeObserver.disconnect()
+      offTheme()
+      offRM()
     }
   }, [])
 

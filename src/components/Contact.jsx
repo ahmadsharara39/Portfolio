@@ -42,12 +42,17 @@ const contactItems = [
 
 const STATUS = { idle: 'idle', sending: 'sending', sent: 'sent', error: 'error' }
 
+const inputClass =
+  'w-full bg-deep border border-border rounded-xl px-5 py-3.5 text-text placeholder:text-text-muted outline-none focus:border-neural focus:shadow-[0_0_15px_rgba(124,58,237,0.12)] transition-all duration-300'
+
 function SuccessOverlay({ onReset }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      role="status"
+      aria-live="polite"
       className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-surface rounded-2xl"
     >
       <motion.div
@@ -229,6 +234,7 @@ export default function Contact() {
                 ref={formRef}
                 onSubmit={handleSubmit}
                 className="space-y-4"
+                aria-busy={status === STATUS.sending}
                 animate={{
                   opacity: status === STATUS.sent ? 0 : 1,
                   scale: status === STATUS.sent ? 0.95 : 1,
@@ -236,44 +242,72 @@ export default function Contact() {
                 transition={{ duration: 0.3 }}
               >
                 <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="contact-name" className="block text-sm font-medium text-text-dim mb-1.5">
+                      Name <span className="text-pulse" aria-hidden="true">*</span>
+                    </label>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      name="name"
+                      placeholder="Your name"
+                      required
+                      autoComplete="name"
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="contact-email" className="block text-sm font-medium text-text-dim mb-1.5">
+                      Email <span className="text-pulse" aria-hidden="true">*</span>
+                    </label>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      name="email"
+                      placeholder="you@example.com"
+                      required
+                      autoComplete="email"
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="contact-subject" className="block text-sm font-medium text-text-dim mb-1.5">
+                    Subject
+                  </label>
                   <input
+                    id="contact-subject"
                     type="text"
-                    name="name"
-                    placeholder="Your Name"
-                    required
-                    className="w-full bg-deep border border-border rounded-xl px-5 py-3.5 text-text placeholder:text-text-muted outline-none focus:border-neural focus:shadow-[0_0_15px_rgba(124,58,237,0.1)] transition-all duration-300"
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Your Email"
-                    required
-                    className="w-full bg-deep border border-border rounded-xl px-5 py-3.5 text-text placeholder:text-text-muted outline-none focus:border-neural focus:shadow-[0_0_15px_rgba(124,58,237,0.1)] transition-all duration-300"
+                    name="_subject"
+                    placeholder="What's this about?"
+                    className={inputClass}
                   />
                 </div>
-                <input
-                  type="text"
-                  name="_subject"
-                  placeholder="Subject"
-                  className="w-full bg-deep border border-border rounded-xl px-5 py-3.5 text-text placeholder:text-text-muted outline-none focus:border-neural focus:shadow-[0_0_15px_rgba(124,58,237,0.1)] transition-all duration-300"
-                />
-                <textarea
-                  name="message"
-                  placeholder="Your Message..."
-                  required
-                  rows={5}
-                  className="w-full bg-deep border border-border rounded-xl px-5 py-3.5 text-text placeholder:text-text-muted outline-none focus:border-neural focus:shadow-[0_0_15px_rgba(124,58,237,0.1)] transition-all duration-300 resize-y"
-                />
+                <div>
+                  <label htmlFor="contact-message" className="block text-sm font-medium text-text-dim mb-1.5">
+                    Message <span className="text-pulse" aria-hidden="true">*</span>
+                  </label>
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    placeholder="Tell me about your project or opportunity..."
+                    required
+                    rows={5}
+                    className={`${inputClass} resize-y`}
+                  />
+                </div>
 
-                {status === STATUS.error && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-2 text-sm text-pulse"
-                  >
-                    <FiAlertCircle /> Something went wrong. Please try again.
-                  </motion.div>
-                )}
+                <div aria-live="polite" role="status" className="min-h-[1.25rem]">
+                  {status === STATUS.error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-center gap-2 text-sm text-pulse"
+                    >
+                      <FiAlertCircle aria-hidden="true" /> Something went wrong. Please try again, or email me directly.
+                    </motion.div>
+                  )}
+                </div>
 
                 <SendButton status={status} />
               </motion.form>

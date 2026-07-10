@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------ */
+/*  Design tokens — dark theme is the default (:root)                  */
+/*  Utilities like bg-surface / text-text resolve to these CSS vars,   */
+/*  so overriding the vars under [data-theme="light"] re-themes the    */
+/*  whole site with zero className churn.                              */
+/* ------------------------------------------------------------------ */
 @theme {
   --color-void: #050510;
   --color-abyss: #0a0a1a;
@@ -18,11 +24,30 @@
   --color-text: #e2e8f0;
   --color-text-dim: #94a3b8;
   --color-text-muted: #64748b;
+
+  /* Code / terminal surface — intentionally dark in BOTH themes */
+  --color-code: #0b0b1a;
+  --color-code-border: #23233f;
+
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
 @layer base {
+  :root {
+    /* Runtime-tunable, non-utility tokens (dark defaults) */
+    --grad-from: #7c3aed;
+    --grad-to: #06b6d4;
+    --grad-pulse-from: #ec4899;
+    --grad-pulse-to: #7c3aed;
+    --glow-neural: 0 0 20px rgba(124, 58, 237, 0.15), 0 0 60px rgba(124, 58, 237, 0.05);
+    --glow-synapse: 0 0 20px rgba(6, 182, 212, 0.15), 0 0 60px rgba(6, 182, 212, 0.05);
+    --text-glow-neural: 0 0 20px rgba(124, 58, 237, 0.5);
+    --grid-line: rgba(124, 58, 237, 0.03);
+    --dot-color: rgba(124, 58, 237, 0.08);
+    color-scheme: dark;
+  }
+
   * {
     margin: 0;
     padding: 0;
@@ -42,39 +67,105 @@
     line-height: 1.7;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
 
   ::selection {
     background: var(--color-neural);
-    color: white;
+    color: #fff;
   }
 
-  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-track { background: var(--color-abyss); }
-  ::-webkit-scrollbar-thumb { background: var(--color-neural); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: var(--color-neural); border-radius: 4px; }
 }
 
+/* ------------------------------------------------------------------ */
+/*  Light theme overrides (unlayered so they win over @theme :root)    */
+/* ------------------------------------------------------------------ */
+html[data-theme="light"] {
+  --color-void: #f6f7fb;
+  --color-abyss: #eceff7;
+  --color-deep: #e6eaf3;
+  --color-surface: #ffffff;
+  --color-elevated: #f8fafc;
+  --color-border: #e2e6ef;
+  --color-border-glow: #c4cbdd;
+  --color-neural: #6d28d9;
+  --color-neural-light: #6d28d9;
+  --color-synapse: #0e7490;
+  --color-synapse-light: #0e7490;
+  --color-pulse: #db2777;
+  --color-pulse-light: #be185d;
+  --color-matrix: #059669;
+  --color-text: #0f172a;
+  --color-text-dim: #475569;
+  --color-text-muted: #5b6577;
+
+  --grad-from: #6d28d9;
+  --grad-to: #0e7490;
+  --grad-pulse-from: #db2777;
+  --grad-pulse-to: #6d28d9;
+  --glow-neural: 0 10px 34px rgba(109, 40, 217, 0.10), 0 2px 8px rgba(15, 23, 42, 0.05);
+  --glow-synapse: 0 10px 34px rgba(14, 116, 144, 0.10), 0 2px 8px rgba(15, 23, 42, 0.05);
+  --text-glow-neural: none;
+  --grid-line: rgba(109, 40, 217, 0.05);
+  --dot-color: rgba(109, 40, 217, 0.07);
+  color-scheme: light;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Accessibility — visible keyboard focus (unlayered to beat          */
+/*  Tailwind's outline-none utility on inputs/buttons).                */
+/* ------------------------------------------------------------------ */
+:focus-visible {
+  outline: 2px solid var(--color-neural);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Reduced motion — neutralise CSS animations/transitions.            */
+/*  Canvas + framer-motion handle their own reduced-motion in JS.      */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Theme-aware utilities                                              */
+/* ------------------------------------------------------------------ */
 @utility glow-neural {
-  box-shadow: 0 0 20px rgba(124, 58, 237, 0.15), 0 0 60px rgba(124, 58, 237, 0.05);
+  box-shadow: var(--glow-neural);
 }
 
 @utility glow-synapse {
-  box-shadow: 0 0 20px rgba(6, 182, 212, 0.15), 0 0 60px rgba(6, 182, 212, 0.05);
+  box-shadow: var(--glow-synapse);
 }
 
 @utility glow-text-neural {
-  text-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+  text-shadow: var(--text-glow-neural);
 }
 
 @utility text-gradient-neural {
-  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  background: linear-gradient(135deg, var(--grad-from), var(--grad-to));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 @utility text-gradient-pulse {
-  background: linear-gradient(135deg, #ec4899, #7c3aed);
+  background: linear-gradient(135deg, var(--grad-pulse-from), var(--grad-pulse-to));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -82,13 +173,13 @@
 
 @utility bg-grid-pattern {
   background-image:
-    linear-gradient(rgba(124, 58, 237, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(124, 58, 237, 0.03) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
 @utility bg-dot-pattern {
-  background-image: radial-gradient(rgba(124, 58, 237, 0.08) 1px, transparent 1px);
+  background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
   background-size: 30px 30px;
 }
 

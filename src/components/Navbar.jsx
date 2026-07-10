@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HiMenuAlt3, HiX } from 'react-icons/hi'
 import { FiDownload } from 'react-icons/fi'
+import ThemeToggle from './ThemeToggle'
 
 const links = [
   { label: 'About', href: '#about' },
@@ -76,24 +77,34 @@ export default function Navbar() {
               Resume
             </a>
           </li>
+          <li className="flex items-center">
+            <ThemeToggle />
+          </li>
         </ul>
 
-        <button
-          onClick={() => setOpen(!open)}
-          className="md:hidden text-text text-2xl"
-          aria-label="Toggle menu"
-        >
-          {open ? <HiX /> : <HiMenuAlt3 />}
-        </button>
+        {/* Mobile controls */}
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+          <button
+            onClick={() => setOpen(!open)}
+            className="w-11 h-11 flex items-center justify-center text-text text-2xl rounded-full hover:text-neural-light transition-colors"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+          >
+            {open ? <HiX /> : <HiMenuAlt3 />}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
         {open && (
           <motion.div
+            id="mobile-menu"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-abyss/95 backdrop-blur-xl border-b border-border"
+            className="md:hidden bg-abyss/95 backdrop-blur-xl border-b border-border overflow-hidden"
           >
             <ul className="px-6 py-4 space-y-3">
               {links.map((link) => (

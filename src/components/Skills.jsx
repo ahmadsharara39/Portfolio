@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { FiCode, FiCpu, FiServer, FiTool } from 'react-icons/fi'
+import { FiCode, FiCpu, FiServer, FiDatabase, FiZap, FiTool } from 'react-icons/fi'
 import SectionHeading from './SectionHeading'
 
 const categories = [
@@ -7,25 +7,37 @@ const categories = [
     icon: <FiCode />,
     title: 'Languages',
     color: 'neural',
-    tags: ['Python', 'C++', 'JavaScript', 'SQL', 'HTML / CSS', 'PHP'],
+    tags: ['Python', 'TypeScript', 'JavaScript', 'C++', 'PHP', 'SQL', 'HTML / CSS'],
   },
   {
     icon: <FiCpu />,
     title: 'AI / ML',
     color: 'synapse',
-    tags: ['PyTorch', 'TensorFlow', 'scikit-learn', 'Hugging Face', 'XGBoost', 'NLTK', 'spaCy', 'pandas', 'NumPy'],
+    tags: ['PyTorch', 'TensorFlow', 'scikit-learn', 'Hugging Face', 'XGBoost', 'SVM', 'pandas', 'NumPy', 'Matplotlib', 'NLTK', 'spaCy'],
   },
   {
     icon: <FiServer />,
     title: 'Frameworks & APIs',
     color: 'pulse',
-    tags: ['FastAPI', 'Flask', 'React', 'Laravel', 'jQuery', 'OpenAI API', 'OpenAPI / Swagger'],
+    tags: ['FastAPI', 'Flask', 'React', 'Tailwind CSS', 'TanStack Query', 'Pydantic v2', 'SQLAlchemy 2', 'OpenAI API', 'OpenAPI / Swagger', 'jQuery', 'Laravel'],
+  },
+  {
+    icon: <FiDatabase />,
+    title: 'Databases',
+    color: 'matrix',
+    tags: ['PostgreSQL', 'Redis', 'MySQL'],
+  },
+  {
+    icon: <FiZap />,
+    title: 'Automation & Platforms',
+    color: 'neural',
+    tags: ['Make', 'Chatcore', 'WhatsApp Business API', 'Meta for Developers', 'Meta Business Suite', 'WordPress'],
   },
   {
     icon: <FiTool />,
-    title: 'Dev Tools & Platforms',
-    color: 'matrix',
-    tags: ['Git', 'GitHub Actions', 'VS Code', 'Docker', 'Linux', 'WordPress', 'Arduino'],
+    title: 'Developer Tools',
+    color: 'synapse',
+    tags: ['Git', 'GitHub Actions', 'Docker', 'Vercel', 'Render', 'Linux', 'VS Code', 'PyCharm', 'Arduino'],
   },
 ]
 
@@ -62,7 +74,7 @@ export default function Skills() {
       <div className="max-w-7xl mx-auto">
         <SectionHeading label="Skills" title="My tech stack" subtitle="The tools and technologies I work with every day." />
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {categories.map((cat, i) => {
             const styles = colorStyles[cat.color]
             return (

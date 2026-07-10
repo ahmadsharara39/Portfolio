@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { FiArrowRight, FiMail, FiDownload } from 'react-icons/fi'
 import NeuralOrb from './NeuralOrb'
 import NeuralNetworkViz from './NeuralNetworkViz'
@@ -21,12 +21,13 @@ const floatingBadges = [
   { label: 'Make.com', x: '80%', y: '40%', delay: 2.5 },
 ]
 
-function useTypingEffect(words, typingSpeed = 80, deletingSpeed = 40, pause = 1800) {
+function useTypingEffect(words, enabled = true, typingSpeed = 80, deletingSpeed = 40, pause = 1800) {
   const [text, setText] = useState('')
   const [wordIndex, setWordIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
+    if (!enabled) return
     const currentWord = words[wordIndex]
     const timer = setTimeout(() => {
       if (!isDeleting) {
@@ -43,13 +44,14 @@ function useTypingEffect(words, typingSpeed = 80, deletingSpeed = 40, pause = 18
       }
     }, isDeleting ? deletingSpeed : typingSpeed)
     return () => clearTimeout(timer)
-  }, [text, isDeleting, wordIndex, words, typingSpeed, deletingSpeed, pause])
+  }, [text, isDeleting, wordIndex, words, enabled, typingSpeed, deletingSpeed, pause])
 
-  return text
+  return enabled ? text : words[0]
 }
 
 export default function Hero() {
-  const typedRole = useTypingEffect(roles)
+  const reduceMotion = useReducedMotion()
+  const typedRole = useTypingEffect(roles, !reduceMotion)
 
   return (
     <section className="relative min-h-screen flex items-center justify-center px-6 pt-24 pb-16 overflow-hidden">
@@ -80,6 +82,19 @@ export default function Hero() {
       <div className="relative z-10 max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
         {/* Left - Text */}
         <div className="text-center lg:text-left">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-matrix/10 border border-matrix/25 text-matrix text-xs font-medium mb-5"
+          >
+            <span className="relative flex h-2 w-2" aria-hidden="true">
+              <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-matrix opacity-60" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-matrix" />
+            </span>
+            Available for opportunities
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -168,7 +183,7 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.6 }}
           className="lg:hidden col-span-full flex justify-center gap-6 mt-4"
         >
-          {[['3+', 'Roles'], ['6+', 'Projects'], ['88%', 'NLP Acc.']].map(([val, label]) => (
+          {[['3+', 'Roles'], ['7+', 'Projects'], ['88%', 'NLP Acc.']].map(([val, label]) => (
             <div key={label} className="text-center">
               <div className="text-xl font-extrabold text-gradient-neural">{val}</div>
               <div className="text-[0.65rem] text-text-muted uppercase tracking-wider">{label}</div>

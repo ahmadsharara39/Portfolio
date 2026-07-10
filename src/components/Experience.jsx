@@ -12,6 +12,7 @@ const jobs = [
     icon: <FiZap />,
     bullets: [
       'Designed and deployed automation workflows, chatbots, and web scraping solutions using Make, Chatcore, and custom APIs — connecting platforms end-to-end to streamline operations.',
+      'Integrated conversational bots with WhatsApp Business numbers via the Meta for Developers platform — configuring the WhatsApp Cloud API and authoring approved broadcast/message templates for automated customer outreach.',
       'Developed and maintained client-facing WordPress websites and managed ongoing bot/workflow optimization for reliability and performance.',
     ],
   },

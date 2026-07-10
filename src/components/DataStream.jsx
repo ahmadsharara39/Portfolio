@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { getTheme, onThemeChange, prefersReducedMotion } from '../lib/theme'
 
 export default function DataStream({ className = '' }) {
   const canvasRef = useRef(null)
@@ -8,13 +9,22 @@ export default function DataStream({ className = '' }) {
     const ctx = canvas.getContext('2d')
     canvas.width = 200
     canvas.height = 600
+
+    // Purely decorative "matrix rain" — don't animate for reduced-motion users.
+    if (prefersReducedMotion()) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      return
+    }
+
+    let theme = getTheme()
     const chars = '01アイウエオカキクケコ'.split('')
     const columns = 10
     const drops = Array(columns).fill(0)
     let animId
 
     const draw = () => {
-      ctx.fillStyle = 'rgba(5, 5, 16, 0.08)'
+      // Fade the previous frame using the current background colour.
+      ctx.fillStyle = theme === 'light' ? 'rgba(246, 247, 251, 0.08)' : 'rgba(5, 5, 16, 0.08)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
       drops.forEach((y, i) => {
@@ -39,7 +49,13 @@ export default function DataStream({ className = '' }) {
       animId = requestAnimationFrame(draw)
     }
     draw()
-    return () => cancelAnimationFrame(animId)
+
+    const offTheme = onThemeChange((t) => { theme = t })
+
+    return () => {
+      cancelAnimationFrame(animId)
+      offTheme()
+    }
   }, [])
 
   return (
