@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiExternalLink, FiGithub, FiArrowRight } from 'react-icons/fi'
+import { FiExternalLink, FiGithub, FiArrowRight, FiAward } from 'react-icons/fi'
 import {
   HiOutlineShoppingCart,
   HiOutlineChatBubbleLeftRight,
@@ -61,7 +61,7 @@ const projects = [
     type: 'NLP / FinTech',
     category: 'NLP',
     title: 'ABSA — Financial News',
-    desc: 'Implemented Aspect-Based Sentiment Analysis with TF-IDF, entity-sentiment mapping, and FinBERT. Claim-veracity pre-filter using ensemble with 98.6% accuracy.',
+    desc: 'Implemented Aspect-Based Sentiment Analysis with TF-IDF, entity-sentiment mapping, and FinBERT. Added a claim-veracity pre-filter (Logistic Regression, Naive Bayes, Random Forest ensemble) with ROC-curve and error analysis for QA sign-off.',
     tech: ['Python', 'FinBERT', 'TF-IDF', 'scikit-learn', 'pandas'],
     link: 'https://github.com/ahmadsharara39/Aspect-Based-Sentiment-Analysis-in-Financial-News',
     gradient: 'from-matrix to-synapse',
@@ -94,6 +94,7 @@ const projects = [
     desc: 'Dual-mode prosthetic arm control (EMG + on-device voice) with 50 ms latency and 85%+ accuracy. 3D-printed 7-DOF hand powered by 7 servos via ESP32 with REST APIs.',
     tech: ['ESP32', 'C++', 'EMG', '3D Printing', 'REST API'],
     link: null,
+    award: '1st Place — IEEE LNSC 2025',
     gradient: 'from-neural to-pulse',
   },
 ]
@@ -290,6 +291,11 @@ export default function Projects() {
                   <h3 className="text-lg font-bold mb-3 group-hover:text-neural-light transition-colors duration-300">
                     {p.title}
                   </h3>
+                  {p.award && (
+                    <span className="inline-flex items-center gap-1.5 self-start mb-3 px-2.5 py-1 rounded-full bg-matrix/10 border border-matrix/25 text-matrix text-xs font-medium">
+                      <FiAward aria-hidden="true" /> {p.award}
+                    </span>
+                  )}
                   <p className="text-text-dim text-sm flex-1 mb-4 leading-relaxed">{p.desc}</p>
 
                   <div className="flex flex-wrap gap-1.5 mb-5">
