@@ -15,9 +15,9 @@ import SectionHeading from './SectionHeading'
 const categories = ['All', 'AI / ML', 'NLP', 'Web', 'IoT']
 
 // --- FlowPilot AI links -------------------------------------------------
-// Live demo confirmed. Drop the repo URL below to enable the "Code" button.
 const FLOWPILOT_LIVE = 'https://flow-pilot-ai-omega.vercel.app'
-const FLOWPILOT_CODE = '' // e.g. 'https://github.com/ahmadsharara39/FlowPilot-AI'
+const FLOWPILOT_CODE = 'https://github.com/ahmadsharara39/FlowPilot-AI'
+const FLOWPILOT_SHOT = '/projects/flowpilot-dashboard.png'
 // -----------------------------------------------------------------------
 
 const featured = {
@@ -142,16 +142,6 @@ function FeaturedProject() {
 
           <p className="text-text-dim leading-relaxed mb-5">{featured.desc}</p>
 
-          {/* Slim horizontal pipeline — keeps the featured card distinctive below lg */}
-          <div className="flex lg:hidden flex-wrap items-center gap-2 mb-5 font-mono text-xs">
-            {featured.pipeline.map((step, i) => (
-              <span key={step} className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-neural/10 border border-neural/20 text-neural-light">{step}</span>
-                {i < featured.pipeline.length - 1 && <span className="text-neural" aria-hidden="true">→</span>}
-              </span>
-            ))}
-          </div>
-
           <ul className="space-y-2.5 mb-6">
             {featured.highlights.map((h) => (
               <li key={h} className="flex gap-3 text-sm text-text-dim">
@@ -197,39 +187,29 @@ function FeaturedProject() {
           </div>
         </div>
 
-        {/* Right — workflow pipeline visual */}
-        <div className="relative hidden lg:flex items-center justify-center">
+        {/* Right — real product screenshot (links to the live demo) */}
+        <div className="relative flex items-center justify-center">
           <div className="absolute inset-0 bg-neural/5 rounded-2xl blur-3xl" />
-          <div className="relative w-full max-w-sm bg-code border border-code-border rounded-2xl p-6 font-mono text-sm shadow-2xl">
-            <div className="flex items-center gap-2 mb-5">
-              <span className="w-2.5 h-2.5 rounded-full bg-pulse/70" />
-              <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-              <span className="w-2.5 h-2.5 rounded-full bg-matrix/70" />
-              <span className="ml-auto text-[0.65rem] text-slate-500">workflow.run()</span>
-            </div>
-            <div className="space-y-3">
-              {featured.pipeline.map((step, i) => (
-                <div key={step}>
-                  <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-neural/25 border border-neural/40 flex items-center justify-center text-xs text-violet-300">
-                      {i + 1}
-                    </span>
-                    <span className="flex-1 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/10 text-slate-200">
-                      {step}
-                    </span>
-                    <span className="text-[0.6rem] text-emerald-400">✓</span>
-                  </div>
-                  {i < featured.pipeline.length - 1 && (
-                    <div className="ml-3.5 h-4 w-px bg-gradient-to-b from-neural/50 to-synapse/40" />
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="mt-5 pt-4 border-t border-code-border flex items-center gap-2 text-[0.7rem] text-slate-500">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              zero API keys · per-user isolation
-            </div>
-          </div>
+          <a
+            href={FLOWPILOT_LIVE}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open the FlowPilot AI live demo (opens in a new tab)"
+            className="group/shot relative block w-full rounded-xl overflow-hidden border border-border-glow shadow-2xl hover:-translate-y-0.5 transition-transform duration-300"
+          >
+            <img
+              src={FLOWPILOT_SHOT}
+              alt="FlowPilot AI dashboard — automation workflows with run history and status"
+              loading="lazy"
+              width="1902"
+              height="941"
+              className="w-full h-auto"
+            />
+            <span className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/5 group-hover/shot:ring-neural/40 transition" />
+            <span className="pointer-events-none absolute bottom-2 right-2 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-void/70 backdrop-blur-sm border border-border text-[0.7rem] font-mono text-text-dim">
+              <FiExternalLink className="text-[0.7rem]" aria-hidden="true" /> live demo
+            </span>
+          </a>
         </div>
       </div>
     </motion.article>

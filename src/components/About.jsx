@@ -17,7 +17,7 @@ const terminalLines = [
   { text: '✓ Automation workflows: ACTIVE', color: 'text-emerald-400', delay: 2400 },
   { text: '', color: '', delay: 3000 },
   { text: 'const profile = {', color: 'text-purple-400', delay: 3200 },
-  { text: '  role: "AI & Software Engineer",', color: 'text-emerald-400', delay: 3500 },
+  { text: '  role: "Automation & Integration Engineer",', color: 'text-emerald-400', delay: 3500 },
   { text: '  location: "Lebanon",', color: 'text-emerald-400', delay: 3800 },
   { text: '  stack: ["PyTorch", "React",', color: 'text-sky-400', delay: 4100 },
   { text: '    "FastAPI", "Make.com"],', color: 'text-sky-400', delay: 4400 },

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { MotionConfig } from 'framer-motion'
+import { MotionConfig, AnimatePresence } from 'framer-motion'
 import { ThemeProvider } from './context/ThemeContext'
 import { MotionProvider, useMotion } from './context/MotionContext'
 import Navbar from './components/Navbar'
@@ -23,7 +23,9 @@ function AppShell() {
 
   return (
     <MotionConfig reducedMotion={paused ? 'always' : 'user'}>
-      {!loaded && <Preloader onComplete={handleComplete} />}
+      <AnimatePresence>
+        {!loaded && <Preloader onComplete={handleComplete} />}
+      </AnimatePresence>
 
       {/* Skip link for keyboard / screen-reader users */}
       <a

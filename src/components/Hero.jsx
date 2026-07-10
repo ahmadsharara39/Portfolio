@@ -1,20 +1,16 @@
-import { useState, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { FiArrowRight, FiMail, FiExternalLink, FiGithub, FiLinkedin } from 'react-icons/fi'
 import NeuralOrb from './NeuralOrb'
 import NeuralNetworkViz from './NeuralNetworkViz'
 import { useMediaQuery } from '../hooks/useMediaQuery'
+import { useMotion } from '../context/MotionContext'
 
-const roles = [
-  'Automation & Integration Engineer',
-  'AI Engineer',
-  'Full-Stack Builder',
-]
+const primaryRole = 'Automation & Integration Engineer'
 
 const floatingBadges = [
-  { label: 'PyTorch', x: '8%', y: '20%', delay: 0 },
-  { label: 'React', x: '85%', y: '15%', delay: 0.5 },
-  { label: 'FastAPI', x: '5%', y: '70%', delay: 1 },
+  { label: 'Make', x: '8%', y: '20%', delay: 0 },
+  { label: 'FastAPI', x: '85%', y: '15%', delay: 0.5 },
+  { label: 'React', x: '5%', y: '70%', delay: 1 },
 ]
 
 const socials = [
@@ -28,36 +24,10 @@ const stats = [
   ['88%', 'NLP Acc.'],
 ]
 
-function useTypingEffect(words, enabled = true, typingSpeed = 80, deletingSpeed = 40, pause = 1800) {
-  const [text, setText] = useState('')
-  const [wordIndex, setWordIndex] = useState(0)
-  const [isDeleting, setIsDeleting] = useState(false)
-
-  useEffect(() => {
-    if (!enabled) return
-    const currentWord = words[wordIndex]
-    const timer = setTimeout(() => {
-      if (!isDeleting) {
-        setText(currentWord.slice(0, text.length + 1))
-        if (text.length + 1 === currentWord.length) {
-          setTimeout(() => setIsDeleting(true), pause)
-        }
-      } else if (text.length === 0) {
-        setIsDeleting(false)
-        setWordIndex((prev) => (prev + 1) % words.length)
-      } else {
-        setText(currentWord.slice(0, text.length - 1))
-      }
-    }, isDeleting ? deletingSpeed : typingSpeed)
-    return () => clearTimeout(timer)
-  }, [text, isDeleting, wordIndex, words, enabled, typingSpeed, deletingSpeed, pause])
-
-  return enabled ? text : words[0]
-}
-
 export default function Hero() {
   const reduceMotion = useReducedMotion()
-  const typedRole = useTypingEffect(roles, !reduceMotion)
+  const { paused } = useMotion()
+  const frozen = reduceMotion || paused
   const isLg = useMediaQuery('(min-width: 1024px)')
 
   return (
@@ -78,8 +48,8 @@ export default function Hero() {
           aria-hidden="true"
         >
           <motion.div
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 3 + badge.delay * 0.5, repeat: Infinity, ease: 'easeInOut' }}
+            animate={frozen ? { y: 0 } : { y: [0, -8, 0] }}
+            transition={frozen ? { duration: 0 } : { duration: 3 + badge.delay * 0.5, repeat: Infinity, ease: 'easeInOut' }}
             className="px-3 py-1.5 rounded-full bg-surface/60 backdrop-blur-sm border border-border/50 text-xs font-mono text-text-dim"
           >
             {badge.label}
@@ -114,7 +84,7 @@ export default function Hero() {
             <span className="text-gradient-pulse">Sharara</span>
           </motion.h1>
 
-          {/* Typing effect — min-height (not fixed) so the longest role never clips */}
+          {/* Single, stable identity — no cycling, always fully legible */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -122,8 +92,8 @@ export default function Hero() {
             className="min-h-[2.5rem] mb-6 flex items-center justify-center lg:justify-start"
           >
             <span className="font-mono text-base sm:text-xl text-synapse-light leading-tight break-words">
-              &gt; {typedRole}
-              <span className="animate-pulse ml-0.5 text-neural">|</span>
+              &gt; {primaryRole}
+              <span className="animate-pulse ml-0.5 text-neural" aria-hidden="true">|</span>
             </span>
           </motion.div>
 
@@ -133,11 +103,10 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.3 }}
             className="text-lg text-text-dim max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed"
           >
-            Building intelligent systems — from{' '}
-            <span className="text-neural-light font-medium">NLP pipelines</span> and{' '}
-            <span className="text-synapse-light font-medium">ML models</span> to{' '}
-            <span className="text-pulse-light font-medium">automation workflows</span> and
-            seamless API integrations.
+            I connect platforms end-to-end — building{' '}
+            <span className="text-neural-light font-medium">automation workflows</span>,{' '}
+            <span className="text-synapse-light font-medium">chatbots &amp; API integrations</span>, and{' '}
+            <span className="text-pulse-light font-medium">AI/ML features</span> that streamline how teams work.
           </motion.p>
 
           <motion.div
@@ -186,7 +155,7 @@ export default function Hero() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${s.label} (opens in a new tab)`}
-                className="w-10 h-10 flex items-center justify-center rounded-full border border-border text-text-dim hover:text-neural-light hover:border-neural transition-colors"
+                className="w-11 h-11 flex items-center justify-center rounded-full border border-border text-text-dim hover:text-neural-light hover:border-neural transition-colors"
               >
                 {s.icon}
               </a>
@@ -235,8 +204,8 @@ export default function Hero() {
       >
         <span>scroll</span>
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
+          animate={frozen ? { y: 0 } : { y: [0, 8, 0] }}
+          transition={frozen ? { duration: 0 } : { repeat: Infinity, duration: 1.5 }}
           className="w-5 h-8 rounded-full border border-border flex items-start justify-center pt-1.5"
         >
           <div className="w-1 h-2 rounded-full bg-neural" />

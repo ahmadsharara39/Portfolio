@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { getTheme, onThemeChange, shouldFreezeMotion, onAnimationsChange } from '../lib/theme'
+import { getTheme, onThemeChange, shouldFreezeMotion, onAnimationsChange, onReducedMotionChange } from '../lib/theme'
 
 export default function DataStream({ className = '' }) {
   const canvasRef = useRef(null)
@@ -57,11 +57,13 @@ export default function DataStream({ className = '' }) {
 
     const offTheme = onThemeChange((t) => { theme = t })
     const offAnim = onAnimationsChange(start)
+    const offRM = onReducedMotionChange(start)
 
     return () => {
       cancelAnimationFrame(animId)
       offTheme()
       offAnim()
+      offRM()
     }
   }, [])
 

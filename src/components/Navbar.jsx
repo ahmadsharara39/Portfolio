@@ -4,6 +4,7 @@ import { HiMenuAlt3, HiX } from 'react-icons/hi'
 import { FiExternalLink, FiGithub, FiLinkedin } from 'react-icons/fi'
 import ThemeToggle from './ThemeToggle'
 import MotionToggle from './MotionToggle'
+import { useMediaQuery } from '../hooks/useMediaQuery'
 
 const links = [
   { label: 'About', href: '#about' },
@@ -25,6 +26,14 @@ export default function Navbar() {
   const [active, setActive] = useState('')
   const toggleRef = useRef(null)
   const menuRef = useRef(null)
+  const isDesktop = useMediaQuery('(min-width: 1024px)')
+
+  // Crossing to the desktop layout hides the hamburger; make sure an open
+  // mobile menu is closed so its body-scroll-lock cleanup runs (else the page
+  // stays unscrollable after a resize / tablet rotation).
+  useEffect(() => {
+    if (isDesktop) setOpen(false)
+  }, [isDesktop])
 
   useEffect(() => {
     const onScroll = () => {

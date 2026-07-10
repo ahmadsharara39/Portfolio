@@ -90,7 +90,7 @@ export default function Preloader({ onComplete }) {
       <div className="text-center">
         {/* Rendered as a <p>, not a heading, so it doesn't precede the real h1 */}
         <p className="text-2xl font-bold text-gradient-neural mb-2">Ahmad Sharara</p>
-        <p className="text-text-muted text-sm font-mono mb-8">AI &amp; Software Engineer</p>
+        <p className="text-text-muted text-sm font-mono mb-8">Automation &amp; Integration Engineer</p>
       </div>
 
       <div
