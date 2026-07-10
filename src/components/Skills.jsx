@@ -37,7 +37,7 @@ const categories = [
     icon: <FiTool />,
     title: 'Developer Tools',
     color: 'synapse',
-    tags: ['Git', 'GitHub Actions', 'Docker', 'Vercel', 'Render', 'Linux', 'VS Code', 'PyCharm', 'Arduino'],
+    tags: ['Git', 'GitHub Actions', 'Docker', 'Vercel', 'Render', 'Linux', 'VS Code', 'Visual Studio', 'PyCharm', 'Arduino'],
   },
 ]
 

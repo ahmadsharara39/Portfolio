@@ -36,7 +36,7 @@ export default function App() {
           <ParticleField />
           <ScrollProgress />
           <Navbar />
-          <main id="main">
+          <main id="main" tabIndex={-1}>
             <Hero />
             <About />
             <Experience />

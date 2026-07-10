@@ -35,12 +35,11 @@ function useTypingEffect(words, enabled = true, typingSpeed = 80, deletingSpeed 
         if (text.length + 1 === currentWord.length) {
           setTimeout(() => setIsDeleting(true), pause)
         }
+      } else if (text.length === 0) {
+        setIsDeleting(false)
+        setWordIndex((prev) => (prev + 1) % words.length)
       } else {
         setText(currentWord.slice(0, text.length - 1))
-        if (text.length === 0) {
-          setIsDeleting(false)
-          setWordIndex((prev) => (prev + 1) % words.length)
-        }
       }
     }, isDeleting ? deletingSpeed : typingSpeed)
     return () => clearTimeout(timer)

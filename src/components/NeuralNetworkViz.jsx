@@ -39,6 +39,10 @@ export default function NeuralNetworkViz() {
     let t = 0
 
     const connBase = () => (theme === 'light' ? 0.13 : 0.06)
+    // Node cores wash out on the light background, so darken them there
+    // (matches the --color-neural-light token remap in index.css).
+    const nodeCore = () => (theme === 'light' ? '109, 40, 217' : '167, 139, 250')
+    const nodeEdge = () => (theme === 'light' ? '91, 33, 182' : '124, 58, 237')
 
     const drawConnections = (animated) => {
       const base = connBase()
@@ -99,8 +103,8 @@ export default function NeuralNetworkViz() {
           ctx.beginPath()
           ctx.arc(node.x, node.y, r, 0, Math.PI * 2)
           const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, r)
-          grad.addColorStop(0, `rgba(167, 139, 250, ${0.7 + pulse * 0.3})`)
-          grad.addColorStop(1, `rgba(124, 58, 237, ${0.3 + pulse * 0.2})`)
+          grad.addColorStop(0, `rgba(${nodeCore()}, ${0.7 + pulse * 0.3})`)
+          grad.addColorStop(1, `rgba(${nodeEdge()}, ${0.3 + pulse * 0.2})`)
           ctx.fillStyle = grad
           ctx.fill()
         }

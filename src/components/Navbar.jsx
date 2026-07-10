@@ -56,6 +56,7 @@ export default function Navbar() {
             <li key={link.href}>
               <a
                 href={link.href}
+                aria-current={active === link.href.slice(1) ? 'page' : undefined}
                 className={`text-sm font-medium transition-colors relative group ${
                   active === link.href.slice(1) ? 'text-neural-light' : 'text-text-dim hover:text-neural-light'
                 }`}
@@ -112,7 +113,10 @@ export default function Navbar() {
                   <a
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className="block text-text-dim hover:text-neural-light transition-colors py-2"
+                    aria-current={active === link.href.slice(1) ? 'page' : undefined}
+                    className={`flex items-center min-h-11 py-2 transition-colors ${
+                      active === link.href.slice(1) ? 'text-neural-light' : 'text-text-dim hover:text-neural-light'
+                    }`}
                   >
                     {link.label}
                   </a>
@@ -122,7 +126,7 @@ export default function Navbar() {
                 <a
                   href="/Ahmad_Sharara_CV.pdf"
                   download
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-neural/10 border border-neural/20 text-neural-light text-sm font-medium"
+                  className="inline-flex items-center gap-1.5 min-h-11 px-4 py-2 rounded-full bg-neural/10 border border-neural/20 text-neural-light text-sm font-medium"
                 >
                   <FiDownload className="text-xs" />
                   Resume

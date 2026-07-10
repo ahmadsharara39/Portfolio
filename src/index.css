@@ -45,6 +45,9 @@
     --text-glow-neural: 0 0 20px rgba(124, 58, 237, 0.5);
     --grid-line: rgba(124, 58, 237, 0.03);
     --dot-color: rgba(124, 58, 237, 0.08);
+    --orb-neural: rgba(124, 58, 237, 0.08);
+    --orb-synapse: rgba(6, 182, 212, 0.06);
+    --orb-pulse: rgba(236, 72, 153, 0.06);
     color-scheme: dark;
   }
 
@@ -97,7 +100,7 @@ html[data-theme="light"] {
   --color-synapse-light: #0e7490;
   --color-pulse: #db2777;
   --color-pulse-light: #be185d;
-  --color-matrix: #059669;
+  --color-matrix: #065f46;
   --color-text: #0f172a;
   --color-text-dim: #475569;
   --color-text-muted: #5b6577;
@@ -111,6 +114,9 @@ html[data-theme="light"] {
   --text-glow-neural: none;
   --grid-line: rgba(109, 40, 217, 0.05);
   --dot-color: rgba(109, 40, 217, 0.07);
+  --orb-neural: rgba(109, 40, 217, 0.16);
+  --orb-synapse: rgba(14, 116, 144, 0.14);
+  --orb-pulse: rgba(219, 39, 119, 0.14);
   color-scheme: light;
 }
 
@@ -124,6 +130,11 @@ html[data-theme="light"] {
   border-radius: 6px;
 }
 :focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* The skip-link target is programmatically focused; don't ring the whole page */
+#main:focus {
   outline: none;
 }
 

@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion'
 
+// Values come from CSS custom properties so the glow adapts to light/dark.
 const colors = {
-  neural: 'rgba(124, 58, 237, 0.08)',
-  synapse: 'rgba(6, 182, 212, 0.06)',
-  pulse: 'rgba(236, 72, 153, 0.06)',
+  neural: 'var(--orb-neural)',
+  synapse: 'var(--orb-synapse)',
+  pulse: 'var(--orb-pulse)',
 }
 
 export default function NeuralOrb({ className = '', color = 'neural', delay = 0 }) {

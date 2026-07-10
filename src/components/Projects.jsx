@@ -246,7 +246,7 @@ export default function Projects() {
               key={cat}
               onClick={() => setFilter(cat)}
               aria-pressed={filter === cat}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
+              className={`min-h-11 inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
                 filter === cat
                   ? 'bg-neural text-white shadow-lg shadow-neural/25'
                   : 'bg-surface border border-border text-text-dim hover:border-neural/40 hover:text-neural-light'
@@ -292,7 +292,7 @@ export default function Projects() {
                 </div>
 
                 <div className="p-6 flex flex-col flex-1">
-                  <span className="font-mono text-xs text-neural uppercase tracking-widest mb-2">
+                  <span className="font-mono text-xs text-neural-light uppercase tracking-widest mb-2">
                     {p.type}
                   </span>
                   <h3 className="text-lg font-bold mb-3 group-hover:text-neural-light transition-colors duration-300">
@@ -304,7 +304,7 @@ export default function Projects() {
                     {p.tech.map((t) => (
                       <span
                         key={t}
-                        className="px-2.5 py-0.5 rounded-full text-[0.7rem] bg-neural/6 border border-neural/10 text-text-muted group-hover:border-neural/20 transition-colors"
+                        className="px-2.5 py-0.5 rounded-full text-[0.7rem] bg-neural/6 border border-neural/10 text-text-dim group-hover:border-neural/20 transition-colors"
                       >
                         {t}
                       </span>

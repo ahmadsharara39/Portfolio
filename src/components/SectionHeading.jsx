@@ -7,7 +7,7 @@ export default function SectionHeading({ label, title, subtitle }) {
         initial={{ opacity: 0, x: -20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: '-50px' }}
-        className="inline-flex items-center gap-2 font-mono text-sm text-neural mb-3"
+        className="inline-flex items-center gap-2 font-mono text-sm text-neural-light mb-3"
       >
         <span className="text-neural/40">//</span> {label}
       </motion.div>

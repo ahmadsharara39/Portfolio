@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiMail, FiPhone, FiLinkedin, FiGithub, FiSend, FiCheck, FiAlertCircle } from 'react-icons/fi'
 import SectionHeading from './SectionHeading'
@@ -36,7 +36,7 @@ const contactItems = [
     value: 'github.com/ahmadsharara39',
     href: 'https://github.com/ahmadsharara39',
     color: 'text-text bg-text/10 border-text/20',
-    hoverGlow: 'hover:shadow-[0_0_20px_rgba(226,232,240,0.08)]',
+    hoverGlow: 'hover:shadow-[0_0_20px_rgba(100,116,139,0.18)]',
   },
 ]
 
@@ -46,6 +46,12 @@ const inputClass =
   'w-full bg-deep border border-border rounded-xl px-5 py-3.5 text-text placeholder:text-text-muted outline-none focus:border-neural focus:shadow-[0_0_15px_rgba(124,58,237,0.12)] transition-all duration-300'
 
 function SuccessOverlay({ onReset }) {
+  const btnRef = useRef(null)
+  // Move keyboard focus onto the confirmation when it appears.
+  useEffect(() => {
+    btnRef.current?.focus()
+  }, [])
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -87,6 +93,7 @@ function SuccessOverlay({ onReset }) {
         Thanks for reaching out. I'll get back to you soon.
       </motion.p>
       <motion.button
+        ref={btnRef}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
@@ -142,6 +149,7 @@ function SendButton({ status }) {
 export default function Contact() {
   const [status, setStatus] = useState(STATUS.idle)
   const formRef = useRef(null)
+  const firstFieldRef = useRef(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -158,17 +166,17 @@ export default function Contact() {
         setStatus(STATUS.sent)
       } else {
         setStatus(STATUS.error)
-        setTimeout(() => setStatus(STATUS.idle), 3000)
       }
     } catch {
       setStatus(STATUS.error)
-      setTimeout(() => setStatus(STATUS.idle), 3000)
     }
   }
 
   const handleReset = () => {
     formRef.current?.reset()
     setStatus(STATUS.idle)
+    // Return focus to the form once it's interactive again.
+    requestAnimationFrame(() => firstFieldRef.current?.focus())
   }
 
   return (
@@ -209,7 +217,7 @@ export default function Contact() {
                     {item.icon}
                   </div>
                   <div>
-                    <div className="text-xs text-text-muted font-mono">{item.label}</div>
+                    <div className="text-xs text-text-dim font-mono">{item.label}</div>
                     <div className="font-semibold group-hover:text-neural-light transition-colors">{item.value}</div>
                   </div>
                 </motion.a>
@@ -234,6 +242,7 @@ export default function Contact() {
                 ref={formRef}
                 onSubmit={handleSubmit}
                 className="space-y-4"
+                inert={status === STATUS.sent || undefined}
                 aria-busy={status === STATUS.sending}
                 animate={{
                   opacity: status === STATUS.sent ? 0 : 1,
@@ -247,6 +256,7 @@ export default function Contact() {
                       Name <span className="text-pulse" aria-hidden="true">*</span>
                     </label>
                     <input
+                      ref={firstFieldRef}
                       id="contact-name"
                       type="text"
                       name="name"
@@ -297,7 +307,7 @@ export default function Contact() {
                   />
                 </div>
 
-                <div aria-live="polite" role="status" className="min-h-[1.25rem]">
+                <div role="alert" className="min-h-[1.25rem]">
                   {status === STATUS.error && (
                     <motion.div
                       initial={{ opacity: 0, y: -5 }}
