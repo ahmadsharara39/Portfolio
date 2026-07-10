@@ -1,24 +1,31 @@
 import { useState, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { FiArrowRight, FiMail, FiDownload } from 'react-icons/fi'
+import { FiArrowRight, FiMail, FiExternalLink, FiGithub, FiLinkedin } from 'react-icons/fi'
 import NeuralOrb from './NeuralOrb'
 import NeuralNetworkViz from './NeuralNetworkViz'
+import { useMediaQuery } from '../hooks/useMediaQuery'
 
 const roles = [
   'Automation & Integration Engineer',
   'AI Engineer',
   'Full-Stack Builder',
-  'Integration Architect',
-  'Automation Specialist',
 ]
 
 const floatingBadges = [
   { label: 'PyTorch', x: '8%', y: '20%', delay: 0 },
   { label: 'React', x: '85%', y: '15%', delay: 0.5 },
   { label: 'FastAPI', x: '5%', y: '70%', delay: 1 },
-  { label: 'Hugging Face', x: '88%', y: '65%', delay: 1.5 },
-  { label: 'TensorFlow', x: '15%', y: '45%', delay: 2 },
-  { label: 'Make.com', x: '80%', y: '40%', delay: 2.5 },
+]
+
+const socials = [
+  { icon: <FiGithub />, href: 'https://github.com/ahmadsharara39', label: 'GitHub' },
+  { icon: <FiLinkedin />, href: 'https://linkedin.com/in/ahmadsharara', label: 'LinkedIn' },
+]
+
+const stats = [
+  ['3+', 'Roles'],
+  ['7+', 'Projects'],
+  ['88%', 'NLP Acc.'],
 ]
 
 function useTypingEffect(words, enabled = true, typingSpeed = 80, deletingSpeed = 40, pause = 1800) {
@@ -51,6 +58,7 @@ function useTypingEffect(words, enabled = true, typingSpeed = 80, deletingSpeed 
 export default function Hero() {
   const reduceMotion = useReducedMotion()
   const typedRole = useTypingEffect(roles, !reduceMotion)
+  const isLg = useMediaQuery('(min-width: 1024px)')
 
   return (
     <section className="relative min-h-screen flex items-center justify-center px-6 pt-24 pb-16 overflow-hidden">
@@ -58,20 +66,21 @@ export default function Hero() {
       <NeuralOrb className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px]" color="synapse" delay={2} />
       <NeuralOrb className="absolute top-1/2 left-1/2 w-[400px] h-[400px] -translate-x-1/2 -translate-y-1/2" color="pulse" delay={4} />
 
-      {/* Floating tech badges */}
-      {floatingBadges.map((badge) => (
+      {/* Floating tech badges — only mounted on lg (never loop off-screen on mobile) */}
+      {isLg && floatingBadges.map((badge) => (
         <motion.div
           key={badge.label}
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1 + badge.delay, duration: 0.5 }}
-          className="absolute hidden lg:block"
+          className="absolute"
           style={{ left: badge.x, top: badge.y }}
+          aria-hidden="true"
         >
           <motion.div
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 3 + badge.delay * 0.5, repeat: Infinity, ease: 'easeInOut' }}
-            className="px-3 py-1.5 rounded-full bg-surface/60 backdrop-blur-sm border border-border/50 text-xs font-mono text-text-muted"
+            className="px-3 py-1.5 rounded-full bg-surface/60 backdrop-blur-sm border border-border/50 text-xs font-mono text-text-dim"
           >
             {badge.label}
           </motion.div>
@@ -105,14 +114,14 @@ export default function Hero() {
             <span className="text-gradient-pulse">Sharara</span>
           </motion.h1>
 
-          {/* Typing effect */}
+          {/* Typing effect — min-height (not fixed) so the longest role never clips */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="h-10 mb-6 flex items-center justify-center lg:justify-start"
+            className="min-h-[2.5rem] mb-6 flex items-center justify-center lg:justify-start"
           >
-            <span className="font-mono text-lg sm:text-xl text-synapse-light">
+            <span className="font-mono text-base sm:text-xl text-synapse-light leading-tight break-words">
               &gt; {typedRole}
               <span className="animate-pulse ml-0.5 text-neural">|</span>
             </span>
@@ -122,7 +131,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="text-lg text-text-dim max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed"
+            className="text-lg text-text-dim max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed"
           >
             Building intelligent systems — from{' '}
             <span className="text-neural-light font-medium">NLP pipelines</span> and{' '}
@@ -142,53 +151,78 @@ export default function Hero() {
               className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-neural to-synapse text-white font-semibold shadow-lg shadow-neural/25 hover:shadow-neural/40 hover:-translate-y-0.5 transition-all duration-300"
             >
               View My Work
-              <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+              <FiArrowRight className="group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </a>
             <a
               href="#contact"
               className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-border hover:border-neural text-text-dim hover:text-neural-light font-semibold hover:-translate-y-0.5 transition-all duration-300"
             >
-              <FiMail />
+              <FiMail aria-hidden="true" />
               Get in Touch
             </a>
+          </motion.div>
+
+          {/* Secondary links: résumé + code/profile — the credibility path */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.5 }}
+            className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mt-5"
+          >
             <a
               href="/Ahmad_Sharara_CV.pdf"
-              download
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-border hover:border-synapse text-text-dim hover:text-synapse-light font-semibold hover:-translate-y-0.5 transition-all duration-300"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm text-text-dim hover:text-neural-light transition-colors"
             >
-              <FiDownload />
-              Resume
+              <FiExternalLink className="text-xs" aria-hidden="true" />
+              View résumé
             </a>
+            <span className="w-px h-4 bg-border" aria-hidden="true" />
+            {socials.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${s.label} (opens in a new tab)`}
+                className="w-10 h-10 flex items-center justify-center rounded-full border border-border text-text-dim hover:text-neural-light hover:border-neural transition-colors"
+              >
+                {s.icon}
+              </a>
+            ))}
+          </motion.div>
+
+          {/* Proof stats — visible on all breakpoints, incl. desktop */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.6 }}
+            className="flex justify-center lg:justify-start gap-8 mt-8"
+          >
+            {stats.map(([val, label]) => (
+              <div key={label} className="text-center lg:text-left">
+                <div className="text-2xl font-extrabold text-gradient-neural">{val}</div>
+                <div className="text-xs text-text-dim uppercase tracking-wider mt-0.5">{label}</div>
+              </div>
+            ))}
           </motion.div>
         </div>
 
-        {/* Right - Neural Network Visualization */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="hidden lg:flex items-center justify-center"
-        >
-          <div className="relative">
-            <div className="absolute inset-0 bg-neural/5 rounded-3xl blur-3xl" />
-            <NeuralNetworkViz />
-          </div>
-        </motion.div>
-
-        {/* Mobile: mini stats bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.6 }}
-          className="lg:hidden col-span-full flex justify-center gap-6 mt-4"
-        >
-          {[['3+', 'Roles'], ['7+', 'Projects'], ['88%', 'NLP Acc.']].map(([val, label]) => (
-            <div key={label} className="text-center">
-              <div className="text-xl font-extrabold text-gradient-neural">{val}</div>
-              <div className="text-[0.65rem] text-text-muted uppercase tracking-wider">{label}</div>
+        {/* Right - Neural Network Visualization (mounted only on lg) */}
+        {isLg && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="flex items-center justify-center"
+          >
+            <div className="relative">
+              <div className="absolute inset-0 bg-neural/5 rounded-3xl blur-3xl" />
+              <NeuralNetworkViz />
             </div>
-          ))}
-        </motion.div>
+          </motion.div>
+        )}
       </div>
 
       {/* Scroll indicator */}
@@ -196,7 +230,8 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-text-muted text-xs font-mono"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-text-dim text-xs font-mono"
+        aria-hidden="true"
       >
         <span>scroll</span>
         <motion.div

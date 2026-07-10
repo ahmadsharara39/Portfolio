@@ -70,11 +70,11 @@ const colorStyles = {
 
 export default function Skills() {
   return (
-    <section id="skills" className="relative py-24 px-6">
+    <section id="skills" aria-labelledby="skills-label" className="relative py-16 md:py-24 px-6">
       <div className="max-w-7xl mx-auto">
-        <SectionHeading label="Skills" title="My tech stack" subtitle="The tools and technologies I work with every day." />
+        <SectionHeading labelId="skills-label" label="Skills" title="My tech stack" subtitle="The tools and technologies I work with every day." />
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 auto-rows-fr">
           {categories.map((cat, i) => {
             const styles = colorStyles[cat.color]
             return (

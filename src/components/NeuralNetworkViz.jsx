@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { getTheme, onThemeChange, prefersReducedMotion, onReducedMotionChange } from '../lib/theme'
+import { getTheme, onThemeChange, shouldFreezeMotion, onReducedMotionChange, onAnimationsChange } from '../lib/theme'
 
 const LAYERS = [4, 6, 8, 6, 3]
 const NODE_RADIUS = 4
@@ -22,7 +22,7 @@ export default function NeuralNetworkViz() {
     ctx.scale(2, 2)
 
     let theme = getTheme()
-    let reduced = prefersReducedMotion()
+    let reduced = shouldFreezeMotion()
     let animId = null
 
     const nodes = LAYERS.map((count, li) => {
@@ -138,21 +138,25 @@ export default function NeuralNetworkViz() {
       theme = tm
       if (reduced) drawStatic()
     })
-    const offRM = onReducedMotionChange((r) => {
-      reduced = r
+    const refreshFrozen = () => {
+      reduced = shouldFreezeMotion()
       start()
-    })
+    }
+    const offRM = onReducedMotionChange(refreshFrozen)
+    const offAnim = onAnimationsChange(refreshFrozen)
 
     return () => {
       cancelAnimationFrame(animId)
       offTheme()
       offRM()
+      offAnim()
     }
   }, [])
 
   return (
     <canvas
       ref={canvasRef}
+      aria-hidden="true"
       className="opacity-60 hover:opacity-80 transition-opacity duration-700"
     />
   )

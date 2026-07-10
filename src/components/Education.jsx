@@ -4,15 +4,15 @@ import SectionHeading from './SectionHeading'
 
 export default function Education() {
   return (
-    <section id="education" className="relative py-24 px-6">
-      <div className="max-w-4xl mx-auto">
-        <SectionHeading label="Education" title="Academic background" />
+    <section id="education" aria-labelledby="education-label" className="relative py-16 md:py-20 px-6">
+      <div className="max-w-7xl mx-auto">
+        <SectionHeading labelId="education-label" label="Education" title="Academic background" />
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-surface border border-border rounded-2xl p-8 flex flex-col sm:flex-row items-center gap-6 hover:border-neural/40 transition-all duration-300 glow-neural"
+          className="max-w-3xl bg-surface border border-border rounded-2xl p-8 flex flex-col sm:flex-row items-center gap-6 hover:border-neural/40 transition-all duration-300 glow-neural"
         >
           <div className="w-20 h-20 rounded-2xl bg-neural/10 flex items-center justify-center text-3xl text-neural shrink-0">
             <HiOutlineAcademicCap />

@@ -1,15 +1,16 @@
 import { motion } from 'framer-motion'
 
-export default function SectionHeading({ label, title, subtitle }) {
+export default function SectionHeading({ label, title, subtitle, labelId }) {
   return (
     <div className="mb-12">
       <motion.div
+        id={labelId}
         initial={{ opacity: 0, x: -20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: '-50px' }}
         className="inline-flex items-center gap-2 font-mono text-sm text-neural-light mb-3"
       >
-        <span className="text-neural/40">//</span> {label}
+        <span className="text-neural/40" aria-hidden="true">//</span> {label}
       </motion.div>
       <motion.h2
         initial={{ opacity: 0, y: 20 }}

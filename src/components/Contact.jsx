@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { FiMail, FiPhone, FiLinkedin, FiGithub, FiSend, FiCheck, FiAlertCircle } from 'react-icons/fi'
 import SectionHeading from './SectionHeading'
 import NeuralOrb from './NeuralOrb'
 import DataStream from './DataStream'
+import { useMediaQuery } from '../hooks/useMediaQuery'
 
 const contactItems = [
   {
@@ -107,6 +108,7 @@ function SuccessOverlay({ onReset }) {
 }
 
 function SendButton({ status }) {
+  const reduce = useReducedMotion()
   return (
     <button
       type="submit"
@@ -122,11 +124,15 @@ function SendButton({ status }) {
             exit={{ opacity: 0, scale: 0.5 }}
             className="flex items-center gap-2.5"
           >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-              className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-            />
+            {reduce ? (
+              <span className="w-2.5 h-2.5 rounded-full bg-white/80 animate-pulse" aria-hidden="true" />
+            ) : (
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+              />
+            )}
             Sending...
           </motion.div>
         ) : (
@@ -150,6 +156,7 @@ export default function Contact() {
   const [status, setStatus] = useState(STATUS.idle)
   const formRef = useRef(null)
   const firstFieldRef = useRef(null)
+  const showDataStream = useMediaQuery('(min-width: 1280px)')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -180,21 +187,21 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="relative py-24 px-6 bg-abyss border-t border-border overflow-hidden">
+    <section id="contact" aria-labelledby="contact-label" className="relative py-16 md:py-24 px-6 bg-abyss border-t border-border overflow-hidden">
       <NeuralOrb className="absolute -top-40 -right-40 w-[500px] h-[500px]" color="neural" delay={1} />
       <NeuralOrb className="absolute -bottom-40 -left-40 w-[400px] h-[400px]" color="synapse" delay={3} />
 
-      <div className="absolute top-0 right-0 opacity-20 hidden xl:block">
-        <DataStream />
-      </div>
-      <div className="absolute top-0 left-0 opacity-15 hidden xl:block">
-        <DataStream />
-      </div>
+      {showDataStream && (
+        <div className="absolute top-0 right-0 opacity-20">
+          <DataStream />
+        </div>
+      )}
 
       <div className="relative z-10 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12">
           <div>
             <SectionHeading
+              labelId="contact-label"
               label="Contact"
               title="Let's work together"
               subtitle="Whether you have a project, a job opportunity, or just want to say hi — I'd love to hear from you."
@@ -220,6 +227,7 @@ export default function Contact() {
                     <div className="text-xs text-text-dim font-mono">{item.label}</div>
                     <div className="font-semibold group-hover:text-neural-light transition-colors">{item.value}</div>
                   </div>
+                  {item.href.startsWith('http') && <span className="sr-only"> (opens in a new tab)</span>}
                 </motion.a>
               ))}
             </div>

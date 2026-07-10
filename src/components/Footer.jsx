@@ -24,7 +24,7 @@ export default function Footer() {
               href={s.href}
               target={s.href.startsWith('http') ? '_blank' : undefined}
               rel={s.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-              aria-label={s.label}
+              aria-label={s.href.startsWith('http') ? `${s.label} (opens in a new tab)` : s.label}
               className="w-11 h-11 rounded-full bg-surface border border-border flex items-center justify-center text-text-dim hover:text-neural hover:border-neural transition-all duration-300 hover:-translate-y-0.5"
             >
               {s.icon}

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { getTheme, onThemeChange, prefersReducedMotion } from '../lib/theme'
+import { getTheme, onThemeChange, shouldFreezeMotion, onAnimationsChange } from '../lib/theme'
 
 export default function DataStream({ className = '' }) {
   const canvasRef = useRef(null)
@@ -10,17 +10,11 @@ export default function DataStream({ className = '' }) {
     canvas.width = 200
     canvas.height = 600
 
-    // Purely decorative "matrix rain" — don't animate for reduced-motion users.
-    if (prefersReducedMotion()) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      return
-    }
-
     let theme = getTheme()
     const chars = '01アイウエオカキクケコ'.split('')
     const columns = 10
     const drops = Array(columns).fill(0)
-    let animId
+    let animId = null
 
     const draw = () => {
       // Fade the previous frame using the current background colour.
@@ -48,19 +42,33 @@ export default function DataStream({ className = '' }) {
 
       animId = requestAnimationFrame(draw)
     }
-    draw()
+
+    // Purely decorative "matrix rain" — freeze for reduced-motion / paused users.
+    const start = () => {
+      cancelAnimationFrame(animId)
+      animId = null
+      if (shouldFreezeMotion()) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        return
+      }
+      draw()
+    }
+    start()
 
     const offTheme = onThemeChange((t) => { theme = t })
+    const offAnim = onAnimationsChange(start)
 
     return () => {
       cancelAnimationFrame(animId)
       offTheme()
+      offAnim()
     }
   }, [])
 
   return (
     <canvas
       ref={canvasRef}
+      aria-hidden="true"
       className={`pointer-events-none opacity-30 ${className}`}
       style={{ width: 200, height: 600 }}
     />

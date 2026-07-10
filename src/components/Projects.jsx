@@ -101,7 +101,7 @@ const projects = [
 function ScanLine({ via = 'synapse' }) {
   const color = via === 'neural' ? 'via-neural/40' : 'via-synapse/40'
   return (
-    <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+    <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-500">
       <div className={`absolute inset-x-0 h-[1px] bg-gradient-to-r from-transparent ${color} to-transparent animate-scan`} />
     </div>
   )
@@ -142,6 +142,16 @@ function FeaturedProject() {
 
           <p className="text-text-dim leading-relaxed mb-5">{featured.desc}</p>
 
+          {/* Slim horizontal pipeline — keeps the featured card distinctive below lg */}
+          <div className="flex lg:hidden flex-wrap items-center gap-2 mb-5 font-mono text-xs">
+            {featured.pipeline.map((step, i) => (
+              <span key={step} className="flex items-center gap-2">
+                <span className="px-2.5 py-1 rounded-lg bg-neural/10 border border-neural/20 text-neural-light">{step}</span>
+                {i < featured.pipeline.length - 1 && <span className="text-neural" aria-hidden="true">→</span>}
+              </span>
+            ))}
+          </div>
+
           <ul className="space-y-2.5 mb-6">
             {featured.highlights.map((h) => (
               <li key={h} className="flex gap-3 text-sm text-text-dim">
@@ -155,7 +165,7 @@ function FeaturedProject() {
             {featured.tech.map((t) => (
               <span
                 key={t}
-                className="px-2.5 py-1 rounded-full text-[0.72rem] bg-neural/8 border border-neural/15 text-text-dim"
+                className="px-2.5 py-1 rounded-full text-xs bg-neural/8 border border-neural/15 text-text-dim"
               >
                 {t}
               </span>
@@ -167,6 +177,7 @@ function FeaturedProject() {
               href={FLOWPILOT_LIVE}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="FlowPilot AI live demo (opens in a new tab)"
               className="group/btn inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-neural to-synapse text-white font-semibold shadow-lg shadow-neural/25 hover:shadow-neural/40 hover:-translate-y-0.5 transition-all duration-300"
             >
               Live Demo
@@ -231,9 +242,10 @@ export default function Projects() {
   const showFeatured = filter === 'All' || filter === featured.category
 
   return (
-    <section id="projects" className="relative py-24 px-6 bg-dot-pattern">
+    <section id="projects" aria-labelledby="projects-label" className="relative py-16 md:py-24 px-6 bg-dot-pattern">
       <div className="max-w-7xl mx-auto">
         <SectionHeading
+          labelId="projects-label"
           label="Projects"
           title="Things I've built"
           subtitle="Spanning AI automation, full-stack development, NLP, and machine learning."
@@ -269,11 +281,11 @@ export default function Projects() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
-                className="group relative bg-surface border border-border rounded-2xl overflow-hidden flex flex-col hover:border-border-glow hover:-translate-y-2 transition-all duration-500 hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)]"
+                className="group relative bg-surface border border-border rounded-2xl overflow-hidden flex flex-col hover:border-border-glow focus-within:border-border-glow hover:-translate-y-2 focus-within:-translate-y-2 transition-all duration-500 hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)]"
               >
                 <ScanLine />
 
-                <div className="relative h-44 overflow-hidden">
+                <div className="relative h-32 md:h-44 overflow-hidden">
                   <div className={`absolute inset-0 bg-gradient-to-br ${p.gradient} opacity-[0.06] group-hover:opacity-[0.15] transition-opacity duration-700`} />
                   <div className="absolute inset-0 bg-grid-pattern opacity-30" />
                   <svg className="absolute inset-0 w-full h-full opacity-[0.05] group-hover:opacity-[0.12] transition-opacity" viewBox="0 0 400 200" aria-hidden="true">
@@ -285,7 +297,7 @@ export default function Projects() {
                     <circle cx="100" cy="120" r="3" className="fill-pulse opacity-50" />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-5xl text-text/15 group-hover:text-text/30 transition-all duration-500" aria-hidden="true">
+                    <div className="text-5xl text-text/30 group-hover:text-text/50 transition-all duration-500" aria-hidden="true">
                       {p.icon}
                     </div>
                   </div>
@@ -304,7 +316,7 @@ export default function Projects() {
                     {p.tech.map((t) => (
                       <span
                         key={t}
-                        className="px-2.5 py-0.5 rounded-full text-[0.7rem] bg-neural/6 border border-neural/10 text-text-dim group-hover:border-neural/20 transition-colors"
+                        className="px-2.5 py-1 rounded-full text-xs bg-neural/6 border border-neural/10 text-text-dim group-hover:border-neural/20 transition-colors"
                       >
                         {t}
                       </span>
@@ -317,7 +329,7 @@ export default function Projects() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 text-sm font-semibold text-neural-light hover:text-neural transition-colors group/link"
-                      aria-label={`View ${p.title} on GitHub`}
+                      aria-label={`View ${p.title} on GitHub (opens in a new tab)`}
                     >
                       <FiGithub aria-hidden="true" />
                       View on GitHub

@@ -42,15 +42,16 @@ const jobs = [
 
 export default function Experience() {
   return (
-    <section id="experience" className="relative py-24 px-6 bg-grid-pattern">
-      <div className="max-w-4xl mx-auto">
+    <section id="experience" aria-labelledby="experience-label" className="relative py-16 md:py-24 px-6 bg-grid-pattern">
+      <div className="max-w-7xl mx-auto">
         <SectionHeading
+          labelId="experience-label"
           label="Experience"
           title="Where I've worked"
           subtitle="A timeline across AI, NLP, automation, and software engineering."
         />
 
-        <div className="relative pl-10">
+        <div className="relative pl-8 sm:pl-10 max-w-4xl">
           {/* Animated timeline line */}
           <div className="absolute left-[14px] top-0 bottom-0 w-[2px]">
             <div className="w-full h-full bg-border" />
@@ -74,7 +75,7 @@ export default function Experience() {
                 className="relative group"
               >
                 {/* Dot with icon */}
-                <div className={`absolute -left-10 top-6 w-7 h-7 rounded-lg flex items-center justify-center text-xs
+                <div className={`absolute -left-8 sm:-left-10 top-6 w-7 h-7 rounded-lg flex items-center justify-center text-xs
                   ${job.current
                     ? 'bg-matrix/20 text-matrix border border-matrix/40 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
                     : 'bg-neural/20 text-neural border border-neural/40'
@@ -83,7 +84,7 @@ export default function Experience() {
                   {job.icon}
                 </div>
 
-                <div className="bg-surface border border-border rounded-2xl p-6 sm:p-8 hover:border-neural/40 transition-all duration-500 group-hover:shadow-[0_0_40px_rgba(124,58,237,0.06)]">
+                <div className="bg-surface border border-border rounded-2xl p-5 sm:p-8 hover:border-neural/40 transition-all duration-500 group-hover:shadow-[0_0_40px_rgba(124,58,237,0.06)]">
                   {/* Scan line */}
                   <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     <div className="absolute inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-neural/30 to-transparent animate-scan" />

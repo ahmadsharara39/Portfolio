@@ -1,5 +1,11 @@
 import { useEffect, useRef } from 'react'
-import { getTheme, onThemeChange, prefersReducedMotion, onReducedMotionChange } from '../lib/theme'
+import {
+  getTheme,
+  onThemeChange,
+  shouldFreezeMotion,
+  onReducedMotionChange,
+  onAnimationsChange,
+} from '../lib/theme'
 
 export default function ParticleField() {
   const canvasRef = useRef(null)
@@ -11,18 +17,31 @@ export default function ParticleField() {
     let mouse = { x: null, y: null }
     let time = 0
     let theme = getTheme()
-    let reduced = prefersReducedMotion()
+    let frozen = shouldFreezeMotion()
+    let resizeTimer = null
 
+    // Viewport-sized (NOT document-height): the field is a fixed background,
+    // so we never allocate a giant off-screen buffer or squish the canvas.
+    const isSmall = () => window.innerWidth < 768
     const resize = () => {
       canvas.width = window.innerWidth
-      canvas.height = document.documentElement.scrollHeight
+      canvas.height = window.innerHeight
     }
     resize()
-    window.addEventListener('resize', resize)
+
+    const onResize = () => {
+      clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(() => {
+        resize()
+        rebuild()
+        if (frozen) drawStatic()
+      }, 150)
+    }
+    window.addEventListener('resize', onResize)
 
     const handleMouse = (e) => {
       mouse.x = e.clientX
-      mouse.y = e.clientY + window.scrollY
+      mouse.y = e.clientY
     }
     window.addEventListener('mousemove', handleMouse)
 
@@ -84,10 +103,17 @@ export default function ParticleField() {
       }
     }
 
-    const count = Math.min(Math.floor((canvas.width * canvas.height) / 10000), 180)
-    const nodes = Array.from({ length: count }, () => new Node())
+    let nodes = []
+    const rebuild = () => {
+      const cap = isSmall() ? 55 : 110
+      const count = Math.min(Math.floor((canvas.width * canvas.height) / 16000), cap)
+      nodes = Array.from({ length: count }, () => new Node())
+    }
+    rebuild()
 
-    const drawConnections = () => {
+    // Single pass: draw connections and (when animated) data pulses in one loop,
+    // with a flat stroke color instead of a per-pair gradient allocation.
+    const drawLinks = (t, animated) => {
       const base = theme === 'light' ? 0.11 : 0.08
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
@@ -97,93 +123,77 @@ export default function ParticleField() {
           if (dist < 150) {
             const alpha = base * (1 - dist / 150)
             const ci = nodes[i].color
-            const cj = nodes[j].color
-            const gradient = ctx.createLinearGradient(nodes[i].x, nodes[i].y, nodes[j].x, nodes[j].y)
-            gradient.addColorStop(0, `rgba(${ci.r}, ${ci.g}, ${ci.b}, ${alpha})`)
-            gradient.addColorStop(1, `rgba(${cj.r}, ${cj.g}, ${cj.b}, ${alpha})`)
+            ctx.strokeStyle = `rgba(${ci.r}, ${ci.g}, ${ci.b}, ${alpha})`
+            ctx.lineWidth = 0.6
             ctx.beginPath()
             ctx.moveTo(nodes[i].x, nodes[i].y)
             ctx.lineTo(nodes[j].x, nodes[j].y)
-            ctx.strokeStyle = gradient
-            ctx.lineWidth = 0.6
             ctx.stroke()
+
+            if (animated && dist < 100 && (i + j) % 7 === 0) {
+              const progress = (t * 0.001 + i * 0.3) % 1
+              const px = nodes[i].x + (nodes[j].x - nodes[i].x) * progress
+              const py = nodes[i].y + (nodes[j].y - nodes[i].y) * progress
+              ctx.beginPath()
+              ctx.arc(px, py, 1.5, 0, Math.PI * 2)
+              ctx.fillStyle = `rgba(6, 182, 212, ${0.6 * (1 - dist / 100)})`
+              ctx.fill()
+            }
           }
         }
       }
     }
 
-    const drawDataPulses = (t) => {
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x
-          const dy = nodes[i].y - nodes[j].y
-          const dist = Math.sqrt(dx * dx + dy * dy)
-          if (dist < 100 && (i + j) % 7 === 0) {
-            const progress = ((t * 0.001 + i * 0.3) % 1)
-            const px = nodes[i].x + (nodes[j].x - nodes[i].x) * progress
-            const py = nodes[i].y + (nodes[j].y - nodes[i].y) * progress
-            ctx.beginPath()
-            ctx.arc(px, py, 1.5, 0, Math.PI * 2)
-            ctx.fillStyle = `rgba(6, 182, 212, ${0.6 * (1 - dist / 100)})`
-            ctx.fill()
-          }
-        }
-      }
-    }
-
-    // Single static frame — used when the visitor prefers reduced motion.
     const drawStatic = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       nodes.forEach((n) => n.draw(ctx))
-      drawConnections()
+      drawLinks(0, false)
     }
 
     const animate = () => {
       time++
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       nodes.forEach((n) => { n.update(time); n.draw(ctx) })
-      drawConnections()
-      drawDataPulses(time)
+      drawLinks(time, true)
       animationId = requestAnimationFrame(animate)
     }
 
     const start = () => {
       cancelAnimationFrame(animationId)
       animationId = null
-      if (reduced) drawStatic()
+      if (frozen) drawStatic()
       else animate()
     }
     start()
 
     const offTheme = onThemeChange((t) => {
       theme = t
-      if (reduced) drawStatic()
+      if (frozen) drawStatic()
     })
-    const offRM = onReducedMotionChange((r) => {
-      reduced = r
+    const refreshFrozen = () => {
+      frozen = shouldFreezeMotion()
       start()
-    })
-    const resizeObserver = new ResizeObserver(() => {
-      resize()
-      if (reduced) drawStatic()
-    })
-    resizeObserver.observe(document.body)
+    }
+    const offRM = onReducedMotionChange(refreshFrozen)
+    const offAnim = onAnimationsChange(refreshFrozen)
 
     return () => {
       cancelAnimationFrame(animationId)
-      window.removeEventListener('resize', resize)
+      clearTimeout(resizeTimer)
+      window.removeEventListener('resize', onResize)
       window.removeEventListener('mousemove', handleMouse)
-      resizeObserver.disconnect()
       offTheme()
       offRM()
+      offAnim()
     }
   }, [])
 
   return (
     <canvas
       ref={canvasRef}
+      aria-hidden="true"
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.7 }}
+      style={{ opacity: 0.5 }}
     />
   )
 }

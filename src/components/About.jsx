@@ -5,7 +5,7 @@ import SectionHeading from './SectionHeading'
 const stats = [
   { value: 3, suffix: '+', label: 'Roles' },
   { value: 7, suffix: '+', label: 'Projects' },
-  { value: 88, suffix: '%', label: 'NLP Accuracy' },
+  { value: 88, suffix: '%', label: 'NLP Acc.' },
 ]
 
 // Terminal is a permanently-dark surface, so use fixed colors (not theme tokens).
@@ -75,7 +75,7 @@ function AnimatedTerminal() {
   }, [inView, reduce])
 
   return (
-    <div ref={ref} className="bg-code border border-code-border rounded-2xl overflow-hidden glow-neural">
+    <div ref={ref} aria-hidden="true" className="bg-code border border-code-border rounded-2xl overflow-hidden glow-neural">
       <div className="flex items-center gap-2 px-5 py-3 border-b border-code-border bg-white/[0.02]">
         <div className="w-3 h-3 rounded-full bg-red-500/70" />
         <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
@@ -108,9 +108,9 @@ function AnimatedTerminal() {
 
 export default function About() {
   return (
-    <section id="about" className="relative py-24 px-6">
+    <section id="about" aria-labelledby="about-label" className="relative py-16 md:py-24 px-6">
       <div className="max-w-7xl mx-auto">
-        <SectionHeading label="About Me" title="Turning data into decisions." subtitle="And ideas into products." />
+        <SectionHeading labelId="about-label" label="About Me" title="Turning data into decisions." subtitle="And ideas into products." />
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-5">
@@ -138,7 +138,7 @@ export default function About() {
               of intelligent systems and practical engineering.
             </motion.p>
 
-            <div className="grid grid-cols-3 gap-4 pt-4">
+            <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-4">
               {stats.map((s, i) => (
                 <motion.div
                   key={s.label}
@@ -146,7 +146,7 @@ export default function About() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.15 + i * 0.1 }}
-                  className="group bg-surface border border-border rounded-xl p-5 text-center hover:border-neural/50 transition-all duration-300 hover:glow-neural"
+                  className="group bg-surface border border-border rounded-xl p-4 sm:p-5 text-center hover:border-neural/50 transition-all duration-300 hover:glow-neural"
                 >
                   <div className="text-2xl sm:text-3xl font-extrabold text-gradient-neural">
                     <AnimatedCounter value={s.value} suffix={s.suffix} />

@@ -21,6 +21,24 @@ export function prefersReducedMotion() {
   )
 }
 
+// User-controlled "pause animations" flag (set by MotionContext via data-anim).
+export function animationsPaused() {
+  return typeof document !== 'undefined' && document.documentElement.getAttribute('data-anim') === 'off'
+}
+
+// Canvases should freeze when EITHER the OS asks for reduced motion OR the user
+// pressed the in-page pause control.
+export function shouldFreezeMotion() {
+  return prefersReducedMotion() || animationsPaused()
+}
+
+// Subscribe to the in-page pause toggle. Returns an unsubscribe fn.
+export function onAnimationsChange(cb) {
+  const handler = () => cb(animationsPaused())
+  window.addEventListener('animationschange', handler)
+  return () => window.removeEventListener('animationschange', handler)
+}
+
 // Subscribe to OS-level reduced-motion changes. Returns an unsubscribe fn.
 export function onReducedMotionChange(cb) {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return () => {}
