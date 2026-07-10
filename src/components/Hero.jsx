@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { FiArrowRight, FiMail, FiExternalLink, FiGithub, FiLinkedin } from 'react-icons/fi'
+import { FiArrowRight, FiMail, FiExternalLink, FiGithub, FiLinkedin, FiMapPin } from 'react-icons/fi'
 import NeuralOrb from './NeuralOrb'
 import NeuralNetworkViz from './NeuralNetworkViz'
 import { useMediaQuery } from '../hooks/useMediaQuery'
@@ -70,7 +70,7 @@ export default function Hero() {
               <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-matrix opacity-60" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-matrix" />
             </span>
-            Available for opportunities
+            Available for full-time work
           </motion.div>
 
           <motion.h1
@@ -89,12 +89,22 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="min-h-[2.5rem] mb-6 flex items-center justify-center lg:justify-start"
+            className="min-h-[2.5rem] mb-3 flex items-center justify-center lg:justify-start"
           >
             <span className="font-mono text-base sm:text-xl text-synapse-light leading-tight break-words">
               &gt; {primaryRole}
               <span className="animate-pulse ml-0.5 text-neural" aria-hidden="true">|</span>
             </span>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.25 }}
+            className="flex items-center justify-center lg:justify-start gap-1.5 text-sm text-text-dim mb-7"
+          >
+            <FiMapPin className="text-neural-light shrink-0" aria-hidden="true" />
+            <span>Remote · Beirut / Saida, Lebanon · open to relocation</span>
           </motion.div>
 
           <motion.p
